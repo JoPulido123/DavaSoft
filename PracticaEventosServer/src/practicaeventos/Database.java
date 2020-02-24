@@ -21,23 +21,23 @@ public class Database {
     //URL que identifica a la base de datos que nos queremos conectar
     //private final String DB_URL = "jdbc:mysql://148.225.64.69:3306/db210215739";
     //private final String DB_URL = "jdbc:mysql://localhost:3306/COFFEES";
-    private final String DB_URL = "jdbc:postgresql://localhost:50805/Eventos";
+    private final String DB_URL = "jdbc:postgresql://localhost:5432/Eventos";
 
     //Driver de JDBC que vamos a usar para conectarnos a la base de datos
-    private final String DRIVER = "org.postgresql.driver";
+    private final String DRIVER = "org.postgresql.Driver";
     private static Database DB = null;
 
     private Database() {
         super();
     }
 
-    private Database(String user, String password) {
+    private Database(String user, String password) throws ClassNotFoundException {
         super();
         con = null;
         try {
 
             // Cargar el driver
-          //  Class.forName(DRIVER);
+           Class.forName(DRIVER);
             Properties props = new Properties();
             props.setProperty("user", user);
             props.setProperty("password", password);
@@ -52,7 +52,7 @@ public class Database {
     }
 
     // Abrir la conexión y regresar objeto Database
-    public static Database getDatabase(String user, String pass) {
+    public static Database getDatabase(String user, String pass) throws ClassNotFoundException {
         if (DB == null) {
             DB = new Database(user, pass);
         }
