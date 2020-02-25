@@ -67,54 +67,75 @@ public class Registrar extends javax.swing.JFrame  {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Contraseña:");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 310, 40));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 310, 40));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel2.setText("Nombre:");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 60, 310, 40));
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 70, 310, 40));
 
         txtUser.setBackground(new java.awt.Color(102, 153, 255));
+        txtUser.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtUser.setForeground(new java.awt.Color(255, 255, 255));
         txtUser.setBorder(null);
-        jPanel2.add(txtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 310, 40));
+        jPanel2.add(txtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 310, 40));
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 310, 10));
 
         txtPass.setBackground(new java.awt.Color(102, 153, 255));
+        txtPass.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtPass.setForeground(new java.awt.Color(255, 255, 255));
         txtPass.setBorder(null);
-        jPanel2.add(txtPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 310, 40));
+        jPanel2.add(txtPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 310, 40));
 
         jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 350, 310, 10));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel4.setText("Nombre de Usuario:");
-        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 310, 40));
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 310, 40));
 
         txtRegNo.setBackground(new java.awt.Color(102, 153, 255));
+        txtRegNo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegNo.setForeground(new java.awt.Color(255, 255, 255));
         txtRegNo.setBorder(null);
-        jPanel2.add(txtRegNo, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 110, 310, 40));
+        txtRegNo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRegNoKeyTyped(evt);
+            }
+        });
+        jPanel2.add(txtRegNo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 110, 310, 40));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel7.setText("Número de Celular:");
-        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 240, 310, 40));
+        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 240, 310, 40));
 
         txtRegDi.setBackground(new java.awt.Color(102, 153, 255));
+        txtRegDi.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegDi.setForeground(new java.awt.Color(255, 255, 255));
         txtRegDi.setBorder(null);
-        jPanel2.add(txtRegDi, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, 310, 40));
+        jPanel2.add(txtRegDi, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 310, 40));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel8.setText("Dirección:");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 160, 310, 40));
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, 310, 40));
 
         txtRegCel.setBackground(new java.awt.Color(102, 153, 255));
+        txtRegCel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegCel.setForeground(new java.awt.Color(255, 255, 255));
         txtRegCel.setBorder(null);
-        jPanel2.add(txtRegCel, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 280, 310, 40));
+        txtRegCel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRegCelKeyTyped(evt);
+            }
+        });
+        jPanel2.add(txtRegCel, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 280, 310, 40));
 
         btnRegistrar.setBackground(new java.awt.Color(0, 204, 204));
         btnRegistrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrarse");
+        btnRegistrar.setActionCommand("btnRegistrar");
         btnRegistrar.setBorder(null);
         jPanel2.add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 420, 200, 40));
 
@@ -122,7 +143,10 @@ public class Registrar extends javax.swing.JFrame  {
         btnVolver.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setText("Volver");
+        btnVolver.setActionCommand("btnVolver");
         btnVolver.setBorder(null);
+        btnVolver.setContentAreaFilled(false);
+        btnVolver.setOpaque(true);
         jPanel2.add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 360, 200, 40));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -148,6 +172,22 @@ public class Registrar extends javax.swing.JFrame  {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtRegNoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRegNoKeyTyped
+      char validar = evt.getKeyChar();
+        if (Character.isDigit(validar)) {
+            evt.consume();
+            JOptionPane.showMessageDialog(this, "Debe ser un nombre sin digitos,bro.");
+        }
+    }//GEN-LAST:event_txtRegNoKeyTyped
+
+    private void txtRegCelKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRegCelKeyTyped
+      char validar = evt.getKeyChar();
+        if (Character.isLetter(validar)) {
+            evt.consume();
+            JOptionPane.showMessageDialog(this, "El teléfono deber ser númerico.");
+        }
+    }//GEN-LAST:event_txtRegCelKeyTyped
 
     /**
      * @param args the command line arguments

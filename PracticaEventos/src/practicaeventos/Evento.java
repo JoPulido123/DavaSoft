@@ -6,6 +6,7 @@
 package practicaeventos;
 
 //import java.sql.Date;
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
 
@@ -13,22 +14,33 @@ import java.util.Date;
  *
  * @author jopul
  */
-public class Evento {
+public class Evento implements Serializable{
+  int eventid;
   String userid;
   String nomevento;
   String descripcion;
   String direccion;
   Date fecha;
   Time hora;
+  String categoria;
 
-    public Evento(String userid, String nomevento, String descripcion, String direccion, Date fecha, Time hora) {
-        this.userid = userid;
-        this.nomevento = nomevento;
-        this.descripcion = descripcion;
-        this.direccion = direccion;
-        this.fecha = fecha;
-        this.hora = hora;
+    public int getEventid() {
+        return eventid;
     }
+
+    public void setEventid(int eventid) {
+        this.eventid = eventid;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    
 
     public String getUserid() {
         return userid;

@@ -62,6 +62,7 @@ public class FormLogin extends javax.swing.JFrame  {
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 310, 40));
 
         txtUser.setBackground(new java.awt.Color(102, 153, 255));
+        txtUser.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         txtUser.setBorder(null);
         jPanel2.add(txtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 310, 40));
 
@@ -90,13 +91,18 @@ public class FormLogin extends javax.swing.JFrame  {
         Registrar.setForeground(new java.awt.Color(255, 255, 255));
         Registrar.setText("Registrar");
         Registrar.setBorder(null);
+        Registrar.setContentAreaFilled(false);
+        Registrar.setOpaque(true);
         jPanel2.add(Registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 420, 160, 30));
 
         Iniciar.setBackground(new java.awt.Color(0, 204, 204));
         Iniciar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         Iniciar.setForeground(new java.awt.Color(255, 255, 255));
         Iniciar.setText("Entrar");
+        Iniciar.setActionCommand("Iniciar");
         Iniciar.setBorder(null);
+        Iniciar.setContentAreaFilled(false);
+        Iniciar.setOpaque(true);
         jPanel2.add(Iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 380, 160, 30));
 
         gridBagConstraints = new java.awt.GridBagConstraints();

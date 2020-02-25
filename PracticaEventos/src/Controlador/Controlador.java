@@ -10,16 +10,32 @@ import Vistas.FormMenuPrincipal;
 import Vistas.Registrar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
+import java.io.Serializable;
 import java.rmi.RemoteException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.sql.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import practicaeventos.Evento;
+
+
+
 import practicaeventos.Usuario;
 import practicaeventos.proxyInterface;
 
@@ -27,20 +43,21 @@ import practicaeventos.proxyInterface;
  *
  * @author jopul
  */
-public class Controlador implements ActionListener {
-    private Evento e;
+public class Controlador implements ActionListener,Serializable {
+
+    private Evento ev = new Evento();
     private FormMenuPrincipal men;
     private FormLogin log;
     private Registrar reg;
     private proxyInterface model;
-    private Usuario u;
-
+    private Usuario u = new Usuario();
+    String usuarioactual = null;
     public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model) throws Exception {
         this.men = men;
         this.model = model;
         this.log = log;
         this.reg = reg;
-
+        DefaultTableModel dm = (DefaultTableModel) men.jEventos.getModel();
         log.txtUser.addActionListener(this);
         log.txtPass.addActionListener(this);
         log.Registrar.addActionListener(this);
@@ -50,7 +67,7 @@ public class Controlador implements ActionListener {
         reg.txtPass.addActionListener(this);
         reg.btnRegistrar.addActionListener(this);
         reg.btnVolver.addActionListener(this);
-        
+
         men.crNom.addActionListener(this);
         men.crDir.addActionListener(this);
         men.crDes.addActionListener(this);
@@ -76,6 +93,20 @@ public class Controlador implements ActionListener {
         //EVENTO 
         men.btnCom.addActionListener(this);
         men.btnRep.addActionListener(this);
+        men.btnCE.addActionListener(this);
+        dm.addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                int row = men.jEventos.getSelectedRow();
+                ev.setUserid(men.jEventos.getValueAt(row, 0).toString());
+                Ocultar("evento");
+            }
+        ;
+        });
+        
+        men.btnEnviarCo.addActionListener(this);
+        men.btnEnviarRep.addActionListener(this);
 
     }
 
@@ -100,37 +131,53 @@ public class Controlador implements ActionListener {
             case "reportes":
                 men.pnReportes.setVisible(true);
                 break;
-                case "categorias":
+            case "categorias":
                 men.pnlinicio.setVisible(true);
                 break;
-                case "crearE":
-                    men.pnREvento.setVisible(true);
-                    break;
+            case "crearE":
+                men.pnREvento.setVisible(true);
+                break;
+
+            case "evento":
+                men.pnEvento1.setVisible(true);
+                break;
 
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+       // Usuario u = null;
+
+        //Evento ev = null;
         DefaultTableModel dm = (DefaultTableModel) men.jEventos.getModel();
+
         try {
             System.out.println(e);
             String command = e.getActionCommand();
             System.out.println(command);
             switch (command) {
                 ///VISTA LOGIN
-                
+
                 case "Registrar":
                     log.dispose();
                     reg.setVisible(true);
                     break;
                 case "Iniciar":
-                    boolean aprobado = model.VerificarUsuario(log.txtUser.getText(), String.valueOf(log.txtPass.getPassword()));
+                    String user = log.txtUser.getText();
+                    String password = String.valueOf(log.txtPass.getPassword());
+                    System.out.println(user);
+                    boolean aprobado = model.VerificarUsuario(user, password);
                     if (aprobado == true) {
-                        u.setNombre(log.txtUser.getText());
+                        log.txtUser.setText("");
+                        log.txtPass.setText("");
+                        System.out.println(user + "2");
+                        usuarioactual = user;
+                        u.setUserid(user);
+                        System.out.println(u.getNombre());
                         log.dispose();
                         men.setVisible(true);
-                    } else {
+                    } else if (aprobado == false) {
                         JOptionPane.showMessageDialog(log, "Usuario/Contraseña incorrectos");
                     }
                     break;
@@ -141,216 +188,214 @@ public class Controlador implements ActionListener {
                     break;
                 case "btnRegistrar":
                     String nombreE = reg.txtUser.getText();
-                    String pass = reg.txtPass.getPassword().toString();
+                    String pass = String.valueOf(reg.txtPass.getPassword());
                     String name = reg.txtRegNo.getText();
                     String dirE = reg.txtRegDi.getText();
                     String cel = reg.txtRegCel.getText();
 //                    Evento e = new Evento();
-                     boolean exito = model.RegistrarUsuario(nombreE, pass,name,dirE,cel);
-                   if (exito == true) {
-                        JOptionPane.showMessageDialog(reg,"Exito al registrar usuario.");
-                     } else {
-                     JOptionPane.showMessageDialog(reg, "Error al registrarse");
-                     }
+                    boolean exito = model.RegistrarUsuario(nombreE, pass, name, dirE, cel);
+                    if (exito == true) {
+                        reg.txtUser.setText("");
+                        reg.txtPass.setText("");
+                        reg.txtRegDi.setText("");
+                        reg.txtRegCel.setText("");
+                        JOptionPane.showMessageDialog(reg, "Exito al registrar usuario.");
+                    } else {
+                        JOptionPane.showMessageDialog(reg, "Error al registrarse");
+                    }
                     break;
                 //VISTA PRINCIPAL
                 // CATEGORÍAS
                 case "espectaculos":
+
                     Ocultar("eventos");
                     // DefaultTableModel dm = (DefaultTableModel) men.jEventos.getModel();
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs = model.FiltrarEventos("Espectaculo");
-                    while (rs.next()) {
-                        String title = rs.getString(3);
-                        String description = rs.getString(4);
-                        String date = rs.getString(5);
-                        String hora = rs.getString(6);
 
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    System.out.println("Llego al especto");
+                    //SerRS rsz = model.FiltrarEventos("Espectaculo");
+                    List<Evento> rs = model.FiltrarEventos("Espectaculos");
+                    for (int i = 0; i < rs.size(); i++) {
+                        String id = String.valueOf(rs.get(i).getEventid());
+                        String title = rs.get(i).getNomevento();
+                        String description = rs.get(i).getDescripcion();
+                        String date = String.valueOf(rs.get(i).getFecha());
+                        String hora = String.valueOf(rs.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs.close();
                     break;
                 case "teatro":
                     Ocultar("eventos");
 
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs1 = model.FiltrarEventos("Teatro");
-                    while (rs1.next()) {
-                        String title = rs1.getString(3);
-                        String description = rs1.getString(4);
-                        String date = rs1.getString(5);
-                        String hora = rs1.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    // dm.fireTableDataChanged();
+                    List<Evento> rs1 = model.FiltrarEventos("Teatro");
+                    for (int i = 0; i < rs1.size(); i++) {
+                        String id = String.valueOf(rs1.get(i).getEventid());
+                        String title = rs1.get(i).getNomevento();
+                        String description = rs1.get(i).getDescripcion();
+                        String date = String.valueOf(rs1.get(i).getFecha());
+                        String hora = String.valueOf(rs1.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs1.close();
                     break;
                 case "educacion":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs2 = model.FiltrarEventos("Educacion");
-                    while (rs2.next()) {
-                        String title = rs2.getString(3);
-                        String description = rs2.getString(4);
-                        String date = rs2.getString(5);
-                        String hora = rs2.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    // dm.fireTableDataChanged();
+                     List<Evento> rs2 = model.FiltrarEventos("Educacion");
+                    for (int i = 0; i < rs2.size(); i++) {
+                        String id = String.valueOf(rs2.get(i).getEventid());
+                        String title = rs2.get(i).getNomevento();
+                        String description = rs2.get(i).getDescripcion();
+                        String date = String.valueOf(rs2.get(i).getFecha());
+                        String hora = String.valueOf(rs2.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs2.close();
                     break;
                 case "cultura":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs3 = model.FiltrarEventos("Cultura");
-                    while (rs3.next()) {
-                        String title = rs3.getString(3);
-                        String description = rs3.getString(4);
-                        String date = rs3.getString(5);
-                        String hora = rs3.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //dm.fireTableDataChanged();
+                     List<Evento> rs3 = model.FiltrarEventos("Cultura");
+                    for (int i = 0; i < rs3.size(); i++) {
+                        String id = String.valueOf(rs3.get(i).getEventid());
+                        String title = rs3.get(i).getNomevento();
+                        String description = rs3.get(i).getDescripcion();
+                        String date = String.valueOf(rs3.get(i).getFecha());
+                        String hora = String.valueOf(rs3.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs3.close();
                     break;
                 case "gastronomia":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs4 = model.FiltrarEventos("Gastronomia");
-                    while (rs4.next()) {
-                        String title = rs4.getString(3);
-                        String description = rs4.getString(4);
-                        String date = rs4.getString(5);
-                        String hora = rs4.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //  dm.fireTableDataChanged();
+                     List<Evento> rs4 = model.FiltrarEventos("Gastronomia");
+                    for (int i = 0; i < rs4.size(); i++) {
+                        String id = String.valueOf(rs4.get(i).getEventid());
+                        String title = rs4.get(i).getNomevento();
+                        String description = rs4.get(i).getDescripcion();
+                        String date = String.valueOf(rs4.get(i).getFecha());
+                        String hora = String.valueOf(rs4.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs4.close();
                     break;
                 case "musica":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs5 = model.FiltrarEventos("Musica");
-                    while (rs5.next()) {
-                        String title = rs5.getString(3);
-                        String description = rs5.getString(4);
-                        String date = rs5.getString(5);
-                        String hora = rs5.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //dm.fireTableDataChanged();  
+                    List<Evento> rs5 = model.FiltrarEventos("Música");
+                    for (int i = 0; i < rs5.size(); i++) {
+                        String id = String.valueOf(rs5.get(i).getEventid());
+                        String title = rs5.get(i).getNomevento();
+                        String description = rs5.get(i).getDescripcion();
+                        String date = String.valueOf(rs5.get(i).getFecha());
+                        String hora = String.valueOf(rs5.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs5.close();
                     break;
                 case "social":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs6 = model.FiltrarEventos("Social");
-                    while (rs6.next()) {
-                        String title = rs6.getString(3);
-                        String description = rs6.getString(4);
-                        String date = rs6.getString(5);
-                        String hora = rs6.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //   dm.fireTableDataChanged();
+                    List<Evento> rs6 = model.FiltrarEventos("Social");
+                    for (int i = 0; i < rs6.size(); i++) {
+                        String id = String.valueOf(rs6.get(i).getEventid());
+                        String title = rs6.get(i).getNomevento();
+                        String description = rs6.get(i).getDescripcion();
+                        String date = String.valueOf(rs6.get(i).getFecha());
+                        String hora = String.valueOf(rs6.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs6.close();
                     break;
                 case "cine":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs7 = model.FiltrarEventos("Cine");
-                    while (rs7.next()) {
-                        String title = rs7.getString(3);
-                        String description = rs7.getString(4);
-                        String date = rs7.getString(5);
-                        String hora = rs7.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //    dm.fireTableDataChanged();
+                   
+                    List<Evento> rs7 = model.FiltrarEventos("Cine");
+                    for (int i = 0; i < rs7.size(); i++) {
+                        String id = String.valueOf(rs7.get(i).getEventid());
+                        String title = rs7.get(i).getNomevento();
+                        String description = rs7.get(i).getDescripcion();
+                        String date = String.valueOf(rs7.get(i).getFecha());
+                        String hora = String.valueOf(rs7.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs7.close();
                     break;
                 case "taller":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs8 = model.FiltrarEventos("Taller");
-                    while (rs8.next()) {
-                        String title = rs8.getString(3);
-                        String description = rs8.getString(4);
-                        String date = rs8.getString(5);
-                        String hora = rs8.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                  //  dm.fireTableDataChanged();
+                   List<Evento> rs8 = model.FiltrarEventos("Taller");
+                    for (int i = 0; i < rs8.size(); i++) {
+                        String id = String.valueOf(rs8.get(i).getEventid());
+                        String title = rs8.get(i).getNomevento();
+                        String description = rs8.get(i).getDescripcion();
+                        String date = String.valueOf(rs8.get(i).getFecha());
+                        String hora = String.valueOf(rs8.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs8.close();
                     break;
                 case "infantil":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rs9 = model.FiltrarEventos("Infantil");
-                    while (rs9.next()) {
-                        String title = rs9.getString(3);
-                        String description = rs9.getString(4);
-                        String date = rs9.getString(5);
-                        String hora = rs9.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //   dm.fireTableDataChanged();
+                   List<Evento> rs9 = model.FiltrarEventos("Social");
+                    for (int i = 0; i < rs9.size(); i++) {
+                        String id = String.valueOf(rs9.get(i).getEventid());
+                        String title = rs9.get(i).getNomevento();
+                        String description = rs9.get(i).getDescripcion();
+                        String date = String.valueOf(rs9.get(i).getFecha());
+                        String hora = String.valueOf(rs9.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rs9.close();
                     break;
                 case "deportes":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rsa1 = model.FiltrarEventos("Deportes");
-                    while (rsa1.next()) {
-                        String title = rsa1.getString(3);
-                        String description = rsa1.getString(4);
-                        String date = rsa1.getString(5);
-                        String hora = rsa1.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //dm.fireTableDataChanged();
+                   List<Evento> rsa1 = model.FiltrarEventos("Deportes");
+                    for (int i = 0; i < rsa1.size(); i++) {
+                        String id = String.valueOf(rsa1.get(i).getEventid());
+                        String title = rsa1.get(i).getNomevento();
+                        String description = rsa1.get(i).getDescripcion();
+                        String date = String.valueOf(rsa1.get(i).getFecha());
+                        String hora = String.valueOf(rsa1.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rsa1.close();
                     break;
                 case "religion":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rsa2 = model.FiltrarEventos("Religion");
-                    while (rsa2.next()) {
-                        String title = rsa2.getString(3);
-                        String description = rsa2.getString(4);
-                        String date = rsa2.getString(5);
-                        String hora = rsa2.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //     dm.fireTableDataChanged();
+                     List<Evento> rsa2 = model.FiltrarEventos("Religion");
+                    for (int i = 0; i < rsa2.size(); i++) {
+                        String id = String.valueOf(rsa2.get(i).getEventid());
+                        String title = rsa2.get(i).getNomevento();
+                        String description = rsa2.get(i).getDescripcion();
+                        String date = String.valueOf(rsa2.get(i).getFecha());
+                        String hora = String.valueOf(rsa2.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
-                    rsa2.close();
                     break;
                 /////TERMINA CATEGORÍAS
                 ///INICIA MOVIMIENTO DE PANELES
                 case "btnVerE":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rsb = model.ObtenerEventos();
-                    while (rsb.next()) {
-                        String title = rsb.getString(3);
-                        String description = rsb.getString(4);
-                        String date = rsb.getString(5);
-                        String hora = rsb.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                    //  dm.fireTableDataChanged();
+                  // SerRS rsb1 = model.ObtenerEventos();
+                    List<Evento> rsb1 = model.ObtenerEventos();
+                   // System.out.println(u.getNombre());
+                    for (int i = 0; i < rsb1.size(); i++) {
+                        String id = String.valueOf(rsb1.get(i).getEventid());
+                        String title = rsb1.get(i).getNomevento();
+                        String description = rsb1.get(i).getDescripcion();
+                        String date = String.valueOf(rsb1.get(i).getFecha());
+                        String hora = String.valueOf(rsb1.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
                     break;
                 case "btnCat":
@@ -359,62 +404,114 @@ public class Controlador implements ActionListener {
                 case "btnMis":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                    dm.fireTableDataChanged();
-                    ResultSet rsc = model.MisEventos(u.getNombre());
-                    while (rsc.next()) {
-                        String title = rsc.getString(3);
-                        String description = rsc.getString(4);
-                        String date = rsc.getString(5);
-                        String hora = rsc.getString(6);
-
-                        dm.addRow(new Object[]{title, description, date, hora});
+                   // dm.fireTableDataChanged();
+                    System.out.println();
+                    //SerRS rsc1 = model.MisEventos(u.getNombre());
+                    System.out.println(usuarioactual);
+                    List<Evento> rsc1 = model.MisEventos(usuarioactual);
+                    System.out.println(u.getNombre());
+                    for (int i = 0; i < rsc1.size(); i++) {
+                        String id = String.valueOf(rsc1.get(i).getEventid());
+                        String title = rsc1.get(i).getNomevento();
+                        String description = rsc1.get(i).getDescripcion();
+                        String date = String.valueOf(rsc1.get(i).getFecha());
+                        String hora = String.valueOf(rsc1.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
                     }
                     break;
+                    ///PANEL CREAR EVENTOS
                 case "btnCrear":
                     Ocultar("crearE");
+
                     break;
+                    ///CREAR EVENTO
+                case "btnCE":
+                    String nombre = men.crNom.getText();
+                    String descrp = men.crDes.getText();
+                    String dir = men.crDir.getText();
+                    String categoria = men.comboCat.getSelectedItem().toString();
+                    //COMPROBACIONES 
+                    if (nombre.equals("") || descrp.equals("") || dir.equals("")) {
+                        JOptionPane.showMessageDialog(men, "Rellenar todos los campos,por favor.");
+                    } else {
+                        if (categoria.equals("...")) {
+                            JOptionPane.showMessageDialog(men, "Seleccione una categoría,por favor.");
+                        } else {
+                            LocalDate localdate = men.dateTimePicker.datePicker.getDate();
+                            //  ZoneId defaultZoneId = ZoneId.systemDefault();
+                            Date date = Date.valueOf(localdate);
+                            LocalTime localtime = men.dateTimePicker.timePicker.getTime();
+                            Time time = Time.valueOf(localtime);
+
+                            System.out.println(date);
+                            System.out.println(time);
+                            System.out.println(u.getUserid());
+                  //  Time time = men.spinTime.get
+                            boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time);
+                            if (exitoE == true) {
+                            men.crNom.setText("");
+                            men.crDir.setText("");
+                            men.crDes.setText("");
+                            
+                            JOptionPane.showMessageDialog(men,"Evento realizado con éxito.");
+                            }else{
+                                JOptionPane.showMessageDialog(men,"Fallo al crear evento.");
+                            }
+                        }
+                    }
+
+                    break;
+                    //VOLVER A LOGIN
                 case "btnCerrarS":
                     men.dispose();
                     log.setVisible(true);
                     break;
-                    
+              //COMENTARIOS
                 case "btnCom":
                     Ocultar("comentarios");
                     men.areaCom.setText("");
                     ArrayList comentarios = model.ObtenerComentarios();
                     for (int i = 0; i < comentarios.size(); i++) {
-                        men.areaCom.append(comentarios.get(i).toString()+"\n");     
+                        men.areaCom.append(comentarios.get(i).toString() + "\n");
                     }
-                     
+
                     break;
                 case "btnRep":
                     Ocultar("reportes");
                     men.areaRep.setText("");
                     ArrayList reportes = model.ObtenerReporte();
                     for (int i = 0; i < reportes.size(); i++) {
-                        men.areaRep.append(reportes.get(i).toString()+"\n");     
+                        men.areaRep.append(reportes.get(i).toString() + "\n");
                     }
                     break;
                 case "btnEnviarCo":
-                    
+
                     men.areaCom.setText("");
-                    String mensaje =  men.mensaje.getText();
+                    String mensaje = men.mensaje.getText();
                     model.RegistrarComentarios(e.getID(), u.getUserid(), mensaje);
                     ArrayList comentarios2 = model.ObtenerComentarios();
                     for (int i = 0; i < comentarios2.size(); i++) {
-                        men.areaCom.append(comentarios2.get(i).toString()+"\n");     
+                        men.areaCom.append(comentarios2.get(i).toString() + "\n");
                     }
                     break;
-                    
-                    
-                    
-                    
+
+                case "btnEnviarRep":
+
+                    men.areaRep.setText("");
+                    String causa = men.textCausa.getText();
+                    String descri = men.textDesc.getText();
+                    model.RegistrarReporte(e.getID(), causa, descri);
+                    ArrayList reportes2 = model.ObtenerComentarios();
+                    for (int i = 0; i < reportes2.size(); i++) {
+                        men.areaRep.append(reportes2.get(i).toString() + "\n");
+                    }
+                    break;
 
             }
         } catch (SQLException ex) {
             System.out.println(ex);
         } catch (RemoteException ex) {
-            System.out.println(ex);
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

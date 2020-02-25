@@ -15,12 +15,7 @@ public class Usuario {
     String tel;
     String direc;
 
-    public Usuario(String userid, String nombre, String tel, String direc) {
-        this.userid = userid;
-        this.nombre = nombre;
-        this.tel = tel;
-        this.direc = direc;
-    }
+
 
     public String getUserid() {
         return userid;
