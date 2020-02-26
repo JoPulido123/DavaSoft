@@ -22,13 +22,14 @@ public interface proxyInterface {
     public boolean ModificarEvento(String nombre) throws SQLException;
     public List<Evento> ObtenerEventos() throws SQLException;
     public boolean RegistrarComentarios(int eventid,String userid,String comentario) throws SQLException;
-    public ArrayList ObtenerComentarios() throws SQLException;
+    public ArrayList ObtenerComentarios(int eventid) throws SQLException;
     public void RegistrarReporte(int eventid,String userid,String detalles) throws SQLException;
-    public ArrayList ObtenerReporte() throws SQLException;
+    public ArrayList ObtenerReporte(int eventid) throws SQLException;
     public boolean RegistrarUsuario(String userid,String pass,String nombre,String direc,String telef) throws SQLException;
     public boolean VerificarUsuario(String userid,String pass) throws SQLException;
     public List<Evento> FiltrarEventos(String categoria) throws SQLException,RemoteException; 
     public List<Evento> MisEventos(String userid) throws SQLException;
     public int Participantes(int eventid) throws SQLException,RemoteException;
     public void Participacion(int eventid,String userid) throws SQLException,RemoteException;
+    public Evento Informacion(int eventid);
 }

@@ -30,7 +30,7 @@ public class Registrar extends javax.swing.JFrame  {
     public Registrar() {
         initComponents();
        
-        setExtendedState(MAXIMIZED_BOTH);
+       // setExtendedState(MAXIMIZED_BOTH);
     }
 
    

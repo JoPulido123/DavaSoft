@@ -29,12 +29,13 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import practicaeventos.Evento;
-
-
 
 import practicaeventos.Usuario;
 import practicaeventos.proxyInterface;
@@ -43,7 +44,7 @@ import practicaeventos.proxyInterface;
  *
  * @author jopul
  */
-public class Controlador implements ActionListener,Serializable {
+public class Controlador implements ActionListener, Serializable {
 
     private Evento ev = new Evento();
     private FormMenuPrincipal men;
@@ -52,6 +53,7 @@ public class Controlador implements ActionListener,Serializable {
     private proxyInterface model;
     private Usuario u = new Usuario();
     String usuarioactual = null;
+
     public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model) throws Exception {
         this.men = men;
         this.model = model;
@@ -94,17 +96,70 @@ public class Controlador implements ActionListener,Serializable {
         men.btnCom.addActionListener(this);
         men.btnRep.addActionListener(this);
         men.btnCE.addActionListener(this);
-        dm.addTableModelListener(new TableModelListener() {
-
+        ListSelectionModel modelo = men.jEventos.getSelectionModel();
+        modelo.addListSelectionListener(new ListSelectionListener() {
+     //   men.jEventos.addMouseListener ();
+       
+       
             @Override
-            public void tableChanged(TableModelEvent e) {
-                int row = men.jEventos.getSelectedRow();
-                ev.setUserid(men.jEventos.getValueAt(row, 0).toString());
-                Ocultar("evento");
+            public void valueChanged(ListSelectionEvent e) {
+                boolean activo = false;
+                if (men.pnEvento1.isVisible()) {
+                   // Ocultar("eventos");
+                    activo = true;
+                }
+                if (activo == false&&men.pnEvento.isVisible()) {
+                    if (!modelo.isSelectionEmpty()&&!modelo.getValueIsAdjusting()) {
+                        try {
+                            Ocultar("evento");
+                            men.nombre1.setText("");
+                            men.desc1.setText("");
+                            men.fecha1.setText("");
+                            men.hora1.setText("");
+                            int selectedrow = men.jEventos.getSelectedRow();
+                            int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
+                            int part = model.Participantes(even);
+                            System.out.println(part);
+                            Evento aa = model.Informacion(even);
+                            ev.setEventid(even);
+                            String nombre = aa.getNomevento();
+                            String descp = aa.getDescripcion();
+                            String address = aa.getDireccion();
+                            String date = aa.getFecha().toString();
+                            String time = aa.getHora().toString();
+                            men.nombre1.setText(nombre);
+                            men.desc1.setText(descp);
+                            men.fecha1.setText(date);
+                            men.hora1.setText(time);
+                            activo = false;
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                }
             }
-        ;
         });
-        
+
+        /* dm.addTableModelListener(new TableModelListener() {
+
+         @Override
+         public void tableChanged(TableModelEvent e) {
+         int row = men.jEventos.getSelectedRow();
+         int even= (int) men.jEventos.getValueAt(row, 0);
+         Evento aa = model.Informacion(even);
+         String nombre=aa.getNomevento();
+         String descp = aa.getDescripcion();
+         String address = aa.getDireccion();
+         String date = aa.getFecha().toString();
+         String time  = aa.getHora().toString();
+                
+         Ocultar("evento");
+         }
+         ;
+         });*/
         men.btnEnviarCo.addActionListener(this);
         men.btnEnviarRep.addActionListener(this);
 
@@ -120,6 +175,7 @@ public class Controlador implements ActionListener,Serializable {
 
         switch (panel) {
             case "eventos":
+
                 men.pnEvento.setVisible(true);
                 break;
             case "miseventos":
@@ -174,7 +230,7 @@ public class Controlador implements ActionListener,Serializable {
                         System.out.println(user + "2");
                         usuarioactual = user;
                         u.setUserid(user);
-                        System.out.println(u.getNombre());
+                        //System.out.println(u.getNombre());
                         log.dispose();
                         men.setVisible(true);
                     } else if (aprobado == false) {
@@ -243,7 +299,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     // dm.fireTableDataChanged();
-                     List<Evento> rs2 = model.FiltrarEventos("Educacion");
+                    List<Evento> rs2 = model.FiltrarEventos("Educacion");
                     for (int i = 0; i < rs2.size(); i++) {
                         String id = String.valueOf(rs2.get(i).getEventid());
                         String title = rs2.get(i).getNomevento();
@@ -257,7 +313,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //dm.fireTableDataChanged();
-                     List<Evento> rs3 = model.FiltrarEventos("Cultura");
+                    List<Evento> rs3 = model.FiltrarEventos("Cultura");
                     for (int i = 0; i < rs3.size(); i++) {
                         String id = String.valueOf(rs3.get(i).getEventid());
                         String title = rs3.get(i).getNomevento();
@@ -271,7 +327,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //  dm.fireTableDataChanged();
-                     List<Evento> rs4 = model.FiltrarEventos("Gastronomia");
+                    List<Evento> rs4 = model.FiltrarEventos("Gastronomia");
                     for (int i = 0; i < rs4.size(); i++) {
                         String id = String.valueOf(rs4.get(i).getEventid());
                         String title = rs4.get(i).getNomevento();
@@ -313,7 +369,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //    dm.fireTableDataChanged();
-                   
+
                     List<Evento> rs7 = model.FiltrarEventos("Cine");
                     for (int i = 0; i < rs7.size(); i++) {
                         String id = String.valueOf(rs7.get(i).getEventid());
@@ -327,8 +383,8 @@ public class Controlador implements ActionListener,Serializable {
                 case "taller":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                  //  dm.fireTableDataChanged();
-                   List<Evento> rs8 = model.FiltrarEventos("Taller");
+                    //  dm.fireTableDataChanged();
+                    List<Evento> rs8 = model.FiltrarEventos("Taller");
                     for (int i = 0; i < rs8.size(); i++) {
                         String id = String.valueOf(rs8.get(i).getEventid());
                         String title = rs8.get(i).getNomevento();
@@ -342,7 +398,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //   dm.fireTableDataChanged();
-                   List<Evento> rs9 = model.FiltrarEventos("Social");
+                    List<Evento> rs9 = model.FiltrarEventos("Infantil");
                     for (int i = 0; i < rs9.size(); i++) {
                         String id = String.valueOf(rs9.get(i).getEventid());
                         String title = rs9.get(i).getNomevento();
@@ -356,7 +412,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //dm.fireTableDataChanged();
-                   List<Evento> rsa1 = model.FiltrarEventos("Deportes");
+                    List<Evento> rsa1 = model.FiltrarEventos("Deportes");
                     for (int i = 0; i < rsa1.size(); i++) {
                         String id = String.valueOf(rsa1.get(i).getEventid());
                         String title = rsa1.get(i).getNomevento();
@@ -370,7 +426,7 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //     dm.fireTableDataChanged();
-                     List<Evento> rsa2 = model.FiltrarEventos("Religion");
+                    List<Evento> rsa2 = model.FiltrarEventos("Religion");
                     for (int i = 0; i < rsa2.size(); i++) {
                         String id = String.valueOf(rsa2.get(i).getEventid());
                         String title = rsa2.get(i).getNomevento();
@@ -386,9 +442,9 @@ public class Controlador implements ActionListener,Serializable {
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
                     //  dm.fireTableDataChanged();
-                  // SerRS rsb1 = model.ObtenerEventos();
+                    // SerRS rsb1 = model.ObtenerEventos();
                     List<Evento> rsb1 = model.ObtenerEventos();
-                   // System.out.println(u.getNombre());
+                    // System.out.println(u.getNombre());
                     for (int i = 0; i < rsb1.size(); i++) {
                         String id = String.valueOf(rsb1.get(i).getEventid());
                         String title = rsb1.get(i).getNomevento();
@@ -404,7 +460,7 @@ public class Controlador implements ActionListener,Serializable {
                 case "btnMis":
                     Ocultar("eventos");
                     dm.getDataVector().removeAllElements();
-                   // dm.fireTableDataChanged();
+                    // dm.fireTableDataChanged();
                     System.out.println();
                     //SerRS rsc1 = model.MisEventos(u.getNombre());
                     System.out.println(usuarioactual);
@@ -419,12 +475,12 @@ public class Controlador implements ActionListener,Serializable {
                         dm.addRow(new Object[]{id, title, description, date, hora});
                     }
                     break;
-                    ///PANEL CREAR EVENTOS
+                ///PANEL CREAR EVENTOS
                 case "btnCrear":
                     Ocultar("crearE");
 
                     break;
-                    ///CREAR EVENTO
+                ///CREAR EVENTO
                 case "btnCE":
                     String nombre = men.crNom.getText();
                     String descrp = men.crDes.getText();
@@ -446,50 +502,59 @@ public class Controlador implements ActionListener,Serializable {
                             System.out.println(date);
                             System.out.println(time);
                             System.out.println(u.getUserid());
-                  //  Time time = men.spinTime.get
+                            //  Time time = men.spinTime.get
                             boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time);
                             if (exitoE == true) {
-                            men.crNom.setText("");
-                            men.crDir.setText("");
-                            men.crDes.setText("");
-                            
-                            JOptionPane.showMessageDialog(men,"Evento realizado con éxito.");
-                            }else{
-                                JOptionPane.showMessageDialog(men,"Fallo al crear evento.");
+                                men.crNom.setText("");
+                                men.crDir.setText("");
+                                men.crDes.setText("");
+
+                                JOptionPane.showMessageDialog(men, "Evento realizado con éxito.");
+                            } else {
+                                JOptionPane.showMessageDialog(men, "Fallo al crear evento.");
                             }
                         }
                     }
 
                     break;
-                    //VOLVER A LOGIN
+                //VOLVER A LOGIN
                 case "btnCerrarS":
                     men.dispose();
                     log.setVisible(true);
                     break;
-              //COMENTARIOS
+                //COMENTARIOS
                 case "btnCom":
                     Ocultar("comentarios");
                     men.areaCom.setText("");
-                    ArrayList comentarios = model.ObtenerComentarios();
-                    for (int i = 0; i < comentarios.size(); i++) {
-                        men.areaCom.append(comentarios.get(i).toString() + "\n");
+                    ArrayList comentarios = model.ObtenerComentarios(ev.getEventid());
+                    if (comentarios == null) {
+                        System.out.println("Equis no pasa nada");
+                    } else {
+                        for (int i = 0; i < comentarios.size(); i++) {
+                            men.areaCom.append(comentarios.get(i).toString() + "\n");
+                        }
                     }
 
                     break;
                 case "btnRep":
                     Ocultar("reportes");
                     men.areaRep.setText("");
-                    ArrayList reportes = model.ObtenerReporte();
-                    for (int i = 0; i < reportes.size(); i++) {
-                        men.areaRep.append(reportes.get(i).toString() + "\n");
+                    ArrayList reportes = model.ObtenerReporte(ev.getEventid());
+                    if (reportes == null) {
+                        System.out.println("Aquí no pasa nada:reporte");
+                    } else {
+                        for (int i = 0; i < reportes.size(); i++) {
+                            men.areaRep.append(reportes.get(i).toString() + "\n");
+                        }
                     }
+
                     break;
                 case "btnEnviarCo":
 
                     men.areaCom.setText("");
                     String mensaje = men.mensaje.getText();
-                    model.RegistrarComentarios(e.getID(), u.getUserid(), mensaje);
-                    ArrayList comentarios2 = model.ObtenerComentarios();
+                    model.RegistrarComentarios(ev.getEventid(), u.getUserid(), mensaje);
+                    ArrayList comentarios2 = model.ObtenerComentarios(ev.getEventid());
                     for (int i = 0; i < comentarios2.size(); i++) {
                         men.areaCom.append(comentarios2.get(i).toString() + "\n");
                     }
@@ -500,8 +565,8 @@ public class Controlador implements ActionListener,Serializable {
                     men.areaRep.setText("");
                     String causa = men.textCausa.getText();
                     String descri = men.textDesc.getText();
-                    model.RegistrarReporte(e.getID(), causa, descri);
-                    ArrayList reportes2 = model.ObtenerComentarios();
+                    model.RegistrarReporte(ev.getEventid(), causa, descri);
+                    ArrayList reportes2 = model.ObtenerReporte(ev.getEventid());
                     for (int i = 0; i < reportes2.size(); i++) {
                         men.areaRep.append(reportes2.get(i).toString() + "\n");
                     }

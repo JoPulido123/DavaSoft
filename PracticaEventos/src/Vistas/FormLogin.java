@@ -23,7 +23,7 @@ public class FormLogin extends javax.swing.JFrame  {
      */
     public FormLogin() {
         initComponents();
-        setExtendedState(MAXIMIZED_BOTH);
+       // setExtendedState(MAXIMIZED_BOTH);
     }
 
    
@@ -62,7 +62,8 @@ public class FormLogin extends javax.swing.JFrame  {
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 310, 40));
 
         txtUser.setBackground(new java.awt.Color(102, 153, 255));
-        txtUser.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        txtUser.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        txtUser.setForeground(new java.awt.Color(255, 255, 255));
         txtUser.setBorder(null);
         jPanel2.add(txtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 310, 40));
 
