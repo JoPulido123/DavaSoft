@@ -8,6 +8,7 @@ package Controlador;
 import Vistas.FormLogin;
 import Vistas.FormMenuPrincipal;
 import Vistas.Registrar;
+import com.teamdev.jxbrowser.browser.Browser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
@@ -26,19 +27,35 @@ import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import practicaeventos.Evento;
-
+import java.awt.BorderLayout;
 import practicaeventos.Usuario;
 import practicaeventos.proxyInterface;
+import static com.teamdev.jxbrowser.engine.RenderingMode.*;
+
+import com.teamdev.jxbrowser.browser.Browser;
+import com.teamdev.jxbrowser.engine.Engine;
+import com.teamdev.jxbrowser.engine.EngineOptions;
+import com.teamdev.jxbrowser.view.swing.BrowserView;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -53,6 +70,17 @@ public class Controlador implements ActionListener, Serializable {
     private proxyInterface model;
     private Usuario u = new Usuario();
     String usuarioactual = null;
+    final JFXPanel fxpanel = new JFXPanel();
+    ///////////////////////////////////////////////////////////////////// 
+    //EngineOptions options
+      //      = EngineOptions.newBuilder(HARDWARE_ACCELERATED).build();
+   // Engine engine = Engine.newInstance(options);
+
+// Create the Browser
+    //Browser browser = engine.newBrowser();
+   // BrowserView view = BrowserView.newInstance(browser);
+    
+    //////////////////////////////////////////////////
 
     public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model) throws Exception {
         this.men = men;
@@ -96,20 +124,64 @@ public class Controlador implements ActionListener, Serializable {
         men.btnCom.addActionListener(this);
         men.btnRep.addActionListener(this);
         men.btnCE.addActionListener(this);
+        log.btnAnon.addActionListener(this);
         ListSelectionModel modelo = men.jEventos.getSelectionModel();
+        //PRUEBA 1
+        men.jEventos.addMouseListener(new java.awt.event.MouseAdapter() {
+    public void mousePressed(MouseEvent me) {
+    JTable table =(JTable) me.getSource();
+   Point p = me.getPoint();
+   int row = table.rowAtPoint(p);
+       if (me.getClickCount() == 2) {
+        try {
+            int linea = table.getSelectedRow();
+            int event = Integer.parseInt((String) table.getValueAt(linea, 0));
+            //Aca llamamos a la ventana que nos traera el los detalles del registro
+            Ocultar("evento");
+            men.nombre1.setText("");
+            men.desc1.setText("");
+            men.fecha1.setText("");
+            men.hora1.setText("");
+            //int selectedrow = men.jEventos.getSelectedRow();
+            //int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
+            int part = model.Participantes(event);
+            System.out.println(part);
+            Evento aa = model.Informacion(event);
+            ev.setEventid(event);
+            String nombre = aa.getNomevento();
+            String descp = aa.getDescripcion();
+            String address = aa.getDireccion().replace(" ", "+");
+            String date = aa.getFecha().toString();
+            String time = aa.getHora().toString();
+            men.nombre1.setText(nombre);
+            men.desc1.setText(descp);
+            men.part1.setText(part + "");
+            men.fecha1.setText(date);
+            men.hora1.setText(time);
+        } catch (SQLException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     }
+ }
+});
+        
+        
+       /* 
         modelo.addListSelectionListener(new ListSelectionListener() {
-     //   men.jEventos.addMouseListener ();
-       
+            //   men.jEventos.addMouseListener ();
        
             @Override
             public void valueChanged(ListSelectionEvent e) {
+
                 boolean activo = false;
                 if (men.pnEvento1.isVisible()) {
-                   // Ocultar("eventos");
+                    // Ocultar("eventos");
                     activo = true;
                 }
-                if (activo == false&&men.pnEvento.isVisible()) {
-                    if (!modelo.isSelectionEmpty()&&!modelo.getValueIsAdjusting()) {
+                if (activo == false && men.pnEvento.isVisible()) {
+                    if (!modelo.isSelectionEmpty()) {
                         try {
                             Ocultar("evento");
                             men.nombre1.setText("");
@@ -124,14 +196,21 @@ public class Controlador implements ActionListener, Serializable {
                             ev.setEventid(even);
                             String nombre = aa.getNomevento();
                             String descp = aa.getDescripcion();
-                            String address = aa.getDireccion();
+                            String address = aa.getDireccion().replace(" ", "+");
+                            
+                            
+       //                     men.Map.add(view);
+     //                       browser.navigation().loadUrl("https://www.google.com/maps/place/"+address);
                             String date = aa.getFecha().toString();
                             String time = aa.getHora().toString();
                             men.nombre1.setText(nombre);
                             men.desc1.setText(descp);
+                            men.part1.setText(part + "");
                             men.fecha1.setText(date);
                             men.hora1.setText(time);
                             activo = false;
+
+         Pulido
                         } catch (SQLException ex) {
                             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (RemoteException ex) {
@@ -140,8 +219,7 @@ public class Controlador implements ActionListener, Serializable {
 
                     }
                 }
-            }
-        });
+            }        }); 
 
         /* dm.addTableModelListener(new TableModelListener() {
 
@@ -162,7 +240,8 @@ public class Controlador implements ActionListener, Serializable {
          });*/
         men.btnEnviarCo.addActionListener(this);
         men.btnEnviarRep.addActionListener(this);
-
+        men.btnCom1.addActionListener(this);
+        men.btnCom2.addActionListener(this);
     }
 
     public void Ocultar(String panel) {
@@ -214,6 +293,14 @@ public class Controlador implements ActionListener, Serializable {
             System.out.println(command);
             switch (command) {
                 ///VISTA LOGIN
+                case "btnAnon":
+                    log.dispose();
+                    men.setVisible(true);
+                    men.btnCrear.setVisible(false);
+                    men.btnMis.setVisible(false);
+                    men.btnCom1.setVisible(false);
+                    men.btnCom2.setVisible(false);
+                    break;
 
                 case "Registrar":
                     log.dispose();
@@ -531,7 +618,7 @@ public class Controlador implements ActionListener, Serializable {
                         System.out.println("Equis no pasa nada");
                     } else {
                         for (int i = 0; i < comentarios.size(); i++) {
-                            men.areaCom.append(comentarios.get(i).toString() + "\n");
+                            men.areaCom.append(u.getUserid() + ":" + comentarios.get(i).toString() + "\n");
                         }
                     }
 
@@ -544,7 +631,7 @@ public class Controlador implements ActionListener, Serializable {
                         System.out.println("Aquí no pasa nada:reporte");
                     } else {
                         for (int i = 0; i < reportes.size(); i++) {
-                            men.areaRep.append(reportes.get(i).toString() + "\n");
+                            men.areaRep.append(u.getUserid() + ":" + reportes.get(i).toString() + "\n");
                         }
                     }
 
@@ -556,7 +643,7 @@ public class Controlador implements ActionListener, Serializable {
                     model.RegistrarComentarios(ev.getEventid(), u.getUserid(), mensaje);
                     ArrayList comentarios2 = model.ObtenerComentarios(ev.getEventid());
                     for (int i = 0; i < comentarios2.size(); i++) {
-                        men.areaCom.append(comentarios2.get(i).toString() + "\n");
+                        men.areaCom.append(u.getUserid() + ":" + comentarios2.get(i).toString() + "\n");
                     }
                     break;
 
@@ -568,8 +655,11 @@ public class Controlador implements ActionListener, Serializable {
                     model.RegistrarReporte(ev.getEventid(), causa, descri);
                     ArrayList reportes2 = model.ObtenerReporte(ev.getEventid());
                     for (int i = 0; i < reportes2.size(); i++) {
-                        men.areaRep.append(reportes2.get(i).toString() + "\n");
+                        men.areaRep.append(u.getUserid() + ":" + reportes2.get(i).toString() + "\n");
                     }
+                    break;
+                case "Asistire":
+                    model.Participacion(ev.getEventid(), u.getUserid());
                     break;
 
             }

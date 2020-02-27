@@ -169,8 +169,10 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
         btnCom2 = new javax.swing.JButton();
         hora1 = new javax.swing.JLabel();
         fecha1 = new javax.swing.JLabel();
-        jSeparator8 = new javax.swing.JSeparator();
         jLabel35 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        part1 = new javax.swing.JLabel();
+        Map = new javax.swing.JPanel();
         pnComentarios = new javax.swing.JPanel();
         jPanel31 = new javax.swing.JPanel();
         jPanel32 = new javax.swing.JPanel();
@@ -800,6 +802,7 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
         jLabel13.setText("Hora:");
 
         btnCom.setBackground(new java.awt.Color(31, 174, 255));
+        btnCom.setForeground(new java.awt.Color(255, 255, 255));
         btnCom.setText("Ver Comentarios");
         btnCom.setActionCommand("btnCom");
         btnCom.setBorder(null);
@@ -807,6 +810,7 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
         btnCom.setOpaque(true);
 
         btnRep.setBackground(new java.awt.Color(31, 174, 255));
+        btnRep.setForeground(new java.awt.Color(255, 255, 255));
         btnRep.setText("Reportar");
         btnRep.setActionCommand("btnRep");
         btnRep.setBorder(null);
@@ -814,12 +818,15 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
         btnRep.setOpaque(true);
 
         btnCom1.setBackground(new java.awt.Color(31, 174, 255));
+        btnCom1.setForeground(new java.awt.Color(255, 255, 255));
         btnCom1.setText("Asistiré");
+        btnCom1.setActionCommand("Asistire");
         btnCom1.setBorder(null);
         btnCom1.setContentAreaFilled(false);
         btnCom1.setOpaque(true);
 
         btnCom2.setBackground(new java.awt.Color(31, 174, 255));
+        btnCom2.setForeground(new java.awt.Color(255, 255, 255));
         btnCom2.setText("Me interesa");
         btnCom2.setBorder(null);
         btnCom2.setContentAreaFilled(false);
@@ -836,6 +843,22 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
         jLabel35.setText("Evento");
         jLabel35.setOpaque(true);
 
+        jLabel9.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel9.setText("Participantes:");
+
+        part1.setForeground(new java.awt.Color(102, 153, 255));
+
+        javax.swing.GroupLayout MapLayout = new javax.swing.GroupLayout(Map);
+        Map.setLayout(MapLayout);
+        MapLayout.setHorizontalGroup(
+            MapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 464, Short.MAX_VALUE)
+        );
+        MapLayout.setVerticalGroup(
+            MapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 180, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout pnEvento1Layout = new javax.swing.GroupLayout(pnEvento1);
         pnEvento1.setLayout(pnEvento1Layout);
         pnEvento1Layout.setHorizontalGroup(
@@ -844,25 +867,22 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
             .addGroup(pnEvento1Layout.createSequentialGroup()
                 .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnEvento1Layout.createSequentialGroup()
-                        .addGap(326, 326, 326)
-                        .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnRep, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnEvento1Layout.createSequentialGroup()
-                                .addGap(383, 383, 383)
-                                .addComponent(btnCom2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(pnEvento1Layout.createSequentialGroup()
                         .addGap(393, 393, 393)
                         .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnEvento1Layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(desc1, javax.swing.GroupLayout.PREFERRED_SIZE, 508, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnCom1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCom, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnEvento1Layout.createSequentialGroup()
                                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(nombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(part1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnEvento1Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(desc1, javax.swing.GroupLayout.PREFERRED_SIZE, 508, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnEvento1Layout.createSequentialGroup()
@@ -874,11 +894,15 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
                                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(fecha1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(btnCom1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCom, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(Map, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(pnEvento1Layout.createSequentialGroup()
                         .addGap(682, 682, 682)
-                        .addComponent(jLabel35)))
+                        .addComponent(jLabel35))
+                    .addGroup(pnEvento1Layout.createSequentialGroup()
+                        .addGap(709, 709, 709)
+                        .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRep, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCom2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(718, Short.MAX_VALUE))
         );
         pnEvento1Layout.setVerticalGroup(
@@ -888,11 +912,13 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
                 .addComponent(jPanel29, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel35)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(part1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -907,15 +933,18 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
                 .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hora1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(88, 88, 88)
-                .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCom1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnEvento1Layout.createSequentialGroup()
+                        .addComponent(btnCom1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnCom, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRep, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(btnCom2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
-                .addGroup(pnEvento1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRep, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCom, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(283, Short.MAX_VALUE))
+                .addGap(26, 26, 26)
+                .addComponent(Map, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(148, Short.MAX_VALUE))
         );
 
         jPanel4.add(pnEvento1, "card3");
@@ -1290,6 +1319,7 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JPanel Map;
     public javax.swing.JTextArea areaCom;
     public javax.swing.JTextArea areaRep;
     public javax.swing.JButton btnCE;
@@ -1345,6 +1375,7 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     public javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -1381,11 +1412,11 @@ public class FormMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
-    private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
     public javax.swing.JTextArea mensaje;
     public javax.swing.JButton musica;
     public javax.swing.JLabel nombre1;
+    public javax.swing.JLabel part1;
     public javax.swing.JPanel pnComentarios;
     public javax.swing.JPanel pnEvento;
     public javax.swing.JPanel pnEvento1;
