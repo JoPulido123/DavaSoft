@@ -54,6 +54,9 @@ import com.teamdev.jxbrowser.engine.EngineOptions;
 import com.teamdev.jxbrowser.view.swing.BrowserView;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
@@ -73,15 +76,13 @@ public class Controlador implements ActionListener, Serializable {
     final JFXPanel fxpanel = new JFXPanel();
     ///////////////////////////////////////////////////////////////////// 
     //EngineOptions options
-      //      = EngineOptions.newBuilder(HARDWARE_ACCELERATED).build();
-   // Engine engine = Engine.newInstance(options);
+    //      = EngineOptions.newBuilder(HARDWARE_ACCELERATED).build();
+    // Engine engine = Engine.newInstance(options);
 
 // Create the Browser
     //Browser browser = engine.newBrowser();
-   // BrowserView view = BrowserView.newInstance(browser);
-    
+    // BrowserView view = BrowserView.newInstance(browser);
     //////////////////////////////////////////////////
-
     public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model) throws Exception {
         this.men = men;
         this.model = model;
@@ -120,7 +121,11 @@ public class Controlador implements ActionListener, Serializable {
         men.btnCrear.addActionListener(this);
         men.btnVerE.addActionListener(this);
         men.btnMis.addActionListener(this);
+        men.btnModi.addActionListener(this);
+        men.btnSig.addActionListener(this);
         //EVENTO 
+        men.Undo.addActionListener(this);
+        men.Undo1.addActionListener(this);
         men.btnCom.addActionListener(this);
         men.btnRep.addActionListener(this);
         men.btnCE.addActionListener(this);
@@ -128,120 +133,109 @@ public class Controlador implements ActionListener, Serializable {
         ListSelectionModel modelo = men.jEventos.getSelectionModel();
         //PRUEBA 1
         men.jEventos.addMouseListener(new java.awt.event.MouseAdapter() {
-    public void mousePressed(MouseEvent me) {
-    JTable table =(JTable) me.getSource();
-   Point p = me.getPoint();
-   int row = table.rowAtPoint(p);
-       if (me.getClickCount() == 2) {
-        try {
-            int linea = table.getSelectedRow();
-            int event = Integer.parseInt((String) table.getValueAt(linea, 0));
-            //Aca llamamos a la ventana que nos traera el los detalles del registro
-            Ocultar("evento");
-            men.nombre1.setText("");
-            men.desc1.setText("");
-            men.fecha1.setText("");
-            men.hora1.setText("");
-            //int selectedrow = men.jEventos.getSelectedRow();
-            //int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
-            int part = model.Participantes(event);
-            System.out.println(part);
-            Evento aa = model.Informacion(event);
-            ev.setEventid(event);
-            String nombre = aa.getNomevento();
-            String descp = aa.getDescripcion();
-            String address = aa.getDireccion().replace(" ", "+");
-            String date = aa.getFecha().toString();
-            String time = aa.getHora().toString();
-            men.nombre1.setText(nombre);
-            men.desc1.setText(descp);
-            men.part1.setText(part + "");
-            men.fecha1.setText(date);
-            men.hora1.setText(time);
-        } catch (SQLException ex) {
-            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
-            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-     }
- }
-});
-        
-        
-       /* 
-        modelo.addListSelectionListener(new ListSelectionListener() {
-            //   men.jEventos.addMouseListener ();
-       
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-
-                boolean activo = false;
-                if (men.pnEvento1.isVisible()) {
-                    // Ocultar("eventos");
-                    activo = true;
-                }
-                if (activo == false && men.pnEvento.isVisible()) {
-                    if (!modelo.isSelectionEmpty()) {
-                        try {
-                            Ocultar("evento");
-                            men.nombre1.setText("");
-                            men.desc1.setText("");
-                            men.fecha1.setText("");
-                            men.hora1.setText("");
-                            int selectedrow = men.jEventos.getSelectedRow();
-                            int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
-                            int part = model.Participantes(even);
-                            System.out.println(part);
-                            Evento aa = model.Informacion(even);
-                            ev.setEventid(even);
-                            String nombre = aa.getNomevento();
-                            String descp = aa.getDescripcion();
-                            String address = aa.getDireccion().replace(" ", "+");
-                            
-                            
-       //                     men.Map.add(view);
-     //                       browser.navigation().loadUrl("https://www.google.com/maps/place/"+address);
-                            String date = aa.getFecha().toString();
-                            String time = aa.getHora().toString();
-                            men.nombre1.setText(nombre);
-                            men.desc1.setText(descp);
-                            men.part1.setText(part + "");
-                            men.fecha1.setText(date);
-                            men.hora1.setText(time);
-                            activo = false;
-
-         Pulido
-                        } catch (SQLException ex) {
-                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = table.rowAtPoint(p);
+                if (me.getClickCount() == 2) {
+                    try {
+                       int linea = table.getSelectedRow();
+                       if(linea==-1){
+                           JOptionPane.showMessageDialog(men,"Seleccione un evento");
+                       }else{
+                           int event = Integer.parseInt((String) table.getValueAt(linea, 0));
+                        //Aca llamamos a la ventana que nos traera el los detalles del registro
+                        Ocultar("evento");
+                        men.nombre1.setText("");
+                        men.desc1.setText("");
+                        men.fecha1.setText("");
+                        men.hora1.setText("");
+                        //int selectedrow = men.jEventos.getSelectedRow();
+                        //int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
+                        int part = model.Participantes(event);
+                        System.out.println(part);
+                        Evento aa = model.Informacion(event);
+                        ev.setEventid(event);
+                        String nombre = aa.getNomevento();
+                        String descp = aa.getDescripcion();
+                        String address = aa.getDireccion().replace(" ", "+");
+                        String date = aa.getFecha().toString();
+                        String time = aa.getHora().toString();
+                        men.nombre1.setText(nombre);
+                        men.desc1.setText(descp);
+                        men.part1.setText(part + "");
+                        men.fecha1.setText(date);
+                        men.hora1.setText(time);
+                       }
+                        
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }        }); 
+            }
+        });
 
-        /* dm.addTableModelListener(new TableModelListener() {
-
-         @Override
-         public void tableChanged(TableModelEvent e) {
-         int row = men.jEventos.getSelectedRow();
-         int even= (int) men.jEventos.getValueAt(row, 0);
-         Evento aa = model.Informacion(even);
-         String nombre=aa.getNomevento();
-         String descp = aa.getDescripcion();
-         String address = aa.getDireccion();
-         String date = aa.getFecha().toString();
-         String time  = aa.getHora().toString();
-                
-         Ocultar("evento");
-         }
-         ;
-         });*/
         men.btnEnviarCo.addActionListener(this);
         men.btnEnviarRep.addActionListener(this);
         men.btnCom1.addActionListener(this);
         men.btnCom2.addActionListener(this);
+        men.btnDelete.addActionListener(this);
+        men.btnModi.addActionListener(this);
+        men.jEvD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = table.rowAtPoint(p);
+                if (me.getClickCount() == 2) {
+                    int seguro = JOptionPane.showConfirmDialog(men, "¿Desea eliminar este evento?", "Advertencia", JOptionPane.YES_NO_OPTION);
+                    if (seguro == JOptionPane.YES_OPTION) {
+                        int linea = table.getSelectedRow();
+                        int event = Integer.parseInt((String) table.getValueAt(linea, 0));
+                        boolean exito = model.BorrarEvento(event);
+                        if (exito == true) {
+                            JOptionPane.showMessageDialog(men, "Evento borrado");
+                        } else {
+                            JOptionPane.showMessageDialog(men, "Error al querer borrar el evento.");
+                        }
+                    }
+                }
+            }
+        });
+////
+        men.jMod.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = table.rowAtPoint(p);
+                if (me.getClickCount() == 2) {
+                    int seguro = JOptionPane.showConfirmDialog(men, "¿Desea modificar este evento?", "Advertencia", JOptionPane.YES_NO_OPTION);
+                    if (seguro == JOptionPane.YES_OPTION) {
+                        try {
+                            int linea = table.getSelectedRow();
+                            int event = Integer.parseInt((String) table.getValueAt(linea, 0));
+                            String nombre = table.getValueAt(linea, 1).toString();
+                            String desc = table.getValueAt(linea, 2).toString();
+                            String address = table.getValueAt(linea, 3).toString();
+                            String date = table.getValueAt(linea, 4).toString();
+                            String tiempo = table.getValueAt(linea, 5).toString();
+                            Date fecha = Date.valueOf(date);
+                            Time time = Time.valueOf(tiempo);
+
+                            boolean exito = model.ModificarEvento(event, nombre, desc, address, fecha, time);
+                            if (exito == true) {
+                                JOptionPane.showMessageDialog(men, "Evento modificado");
+                            } else {
+                                JOptionPane.showMessageDialog(men, "Error al modificar el evento,favor de no alterar el id.");
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void Ocultar(String panel) {
@@ -251,6 +245,8 @@ public class Controlador implements ActionListener, Serializable {
         men.pnEvento1.setVisible(false);
         men.pnlinicio.setVisible(false);
         men.pnComentarios.setVisible(false);
+        men.pnEventoD.setVisible(false);
+        men.pnEventoM.setVisible(false);
 
         switch (panel) {
             case "eventos":
@@ -277,6 +273,13 @@ public class Controlador implements ActionListener, Serializable {
                 men.pnEvento1.setVisible(true);
                 break;
 
+            case "borrar":
+                men.pnEventoD.setVisible(true);
+                break;
+            case "modificar":
+                men.pnEventoM.setVisible(true);
+                break;
+
         }
     }
 
@@ -286,6 +289,8 @@ public class Controlador implements ActionListener, Serializable {
 
         //Evento ev = null;
         DefaultTableModel dm = (DefaultTableModel) men.jEventos.getModel();
+        DefaultTableModel dd = (DefaultTableModel) men.jEvD.getModel();
+        DefaultTableModel de = (DefaultTableModel) men.jMod.getModel();
 
         try {
             System.out.println(e);
@@ -300,9 +305,27 @@ public class Controlador implements ActionListener, Serializable {
                     men.btnMis.setVisible(false);
                     men.btnCom1.setVisible(false);
                     men.btnCom2.setVisible(false);
+                    men.btnEnviarCo.setVisible(false);
+                    men.btnEnviarRep.setVisible(false);
+                    men.btnDelete.setVisible(false);
+                    men.btnSig.setVisible(false);
+                    men.labelC.setVisible(false);
+                    men.labeld.setVisible(false);
+                    men.textCausa.setVisible(false);
+                    men.textDesc.setVisible(false);
+                  
+                    men.btnModi.setVisible(false);
+                    break;
+                case "Undo":
+                    men.textCausa.setText("");
+                    men.textDesc.setText("");
+                    men.mensaje.setText("");
+                    Ocultar("evento");
                     break;
 
                 case "Registrar":
+                    log.txtPass.setText("");
+                    log.txtUser.setText("");
                     log.dispose();
                     reg.setVisible(true);
                     break;
@@ -312,6 +335,19 @@ public class Controlador implements ActionListener, Serializable {
                     System.out.println(user);
                     boolean aprobado = model.VerificarUsuario(user, password);
                     if (aprobado == true) {
+                        men.btnCrear.setVisible(true);
+                        men.btnMis.setVisible(true);
+                        men.btnCom1.setVisible(true);
+                        men.btnCom2.setVisible(true);
+                        men.btnEnviarCo.setVisible(true);
+                        men.btnEnviarRep.setVisible(true);
+                        men.btnDelete.setVisible(true);
+                        men.btnModi.setVisible(true);
+                        men.btnSig.setVisible(true);
+                        men.labelC.setVisible(true);
+                    men.labeld.setVisible(true);
+                    men.textCausa.setVisible(true);
+                    men.textDesc.setVisible(true);
                         log.txtUser.setText("");
                         log.txtPass.setText("");
                         System.out.println(user + "2");
@@ -342,12 +378,51 @@ public class Controlador implements ActionListener, Serializable {
                         reg.txtPass.setText("");
                         reg.txtRegDi.setText("");
                         reg.txtRegCel.setText("");
+                        reg.txtRegNo.setText("");
                         JOptionPane.showMessageDialog(reg, "Exito al registrar usuario.");
                     } else {
                         JOptionPane.showMessageDialog(reg, "Error al registrarse");
                     }
                     break;
+
+                case "btnDelete":
+                    Ocultar("borrar");
+                    dd.getDataVector().removeAllElements();
+                    // dm.fireTableDataChanged();
+                    System.out.println();
+                    //SerRS rsc1 = model.MisEventos(u.getNombre());
+                    System.out.println(usuarioactual);
+                    List<Evento> rscc = model.MisEventos(usuarioactual);
+                    System.out.println(u.getNombre());
+                    for (int i = 0; i < rscc.size(); i++) {
+                        String id = String.valueOf(rscc.get(i).getEventid());
+                        String title = rscc.get(i).getNomevento();
+                        String description = rscc.get(i).getDescripcion();
+                        String date = String.valueOf(rscc.get(i).getFecha());
+                        String hora = String.valueOf(rscc.get(i).getHora());
+                        dd.addRow(new Object[]{id, title, description, date, hora});
+                    }
+                    break;
                 //VISTA PRINCIPAL
+                case "btnModi":
+                    Ocultar("modificar");
+                    de.getDataVector().removeAllElements();
+                    // dm.fireTableDataChanged();
+                    System.out.println();
+                    //SerRS rsc1 = model.MisEventos(u.getNombre());
+                    System.out.println(usuarioactual);
+                    List<Evento> rscm = model.MisEventos(usuarioactual);
+                    System.out.println(u.getNombre());
+                    for (int i = 0; i < rscm.size(); i++) {
+                        String id = String.valueOf(rscm.get(i).getEventid());
+                        String title = rscm.get(i).getNomevento();
+                        String description = rscm.get(i).getDescripcion();
+                        String address = rscm.get(i).getDireccion();
+                        String date = String.valueOf(rscm.get(i).getFecha());
+                        String hora = String.valueOf(rscm.get(i).getHora());
+                        de.addRow(new Object[]{id, title, description, address, date, hora});
+                    }
+                    break;
                 // CATEGORÍAS
                 case "espectaculos":
 
@@ -562,6 +637,28 @@ public class Controlador implements ActionListener, Serializable {
                         dm.addRow(new Object[]{id, title, description, date, hora});
                     }
                     break;
+
+                case "btnSig":
+                    Ocultar("eventos");
+
+                    dm.getDataVector().removeAllElements();
+                    // dm.fireTableDataChanged();
+                    System.out.println();
+                    //SerRS rsc1 = model.MisEventos(u.getNombre());
+                    System.out.println(usuarioactual);
+                    List<Evento> rscp = model.Siguiendo(usuarioactual);
+                    // System.out.println(u.getNombre());
+                    for (int i = 0; i < rscp.size(); i++) {
+                        String id = String.valueOf(rscp.get(i).getEventid());
+                        String title = rscp.get(i).getNomevento();
+                        String description = rscp.get(i).getDescripcion();
+                        String date = String.valueOf(rscp.get(i).getFecha());
+                        String hora = String.valueOf(rscp.get(i).getHora());
+                        dm.addRow(new Object[]{id, title, description, date, hora});
+                    }
+
+                    break;
+
                 ///PANEL CREAR EVENTOS
                 case "btnCrear":
                     Ocultar("crearE");
@@ -581,30 +678,47 @@ public class Controlador implements ActionListener, Serializable {
                             JOptionPane.showMessageDialog(men, "Seleccione una categoría,por favor.");
                         } else {
                             LocalDate localdate = men.dateTimePicker.datePicker.getDate();
-                            //  ZoneId defaultZoneId = ZoneId.systemDefault();
-                            Date date = Date.valueOf(localdate);
-                            LocalTime localtime = men.dateTimePicker.timePicker.getTime();
-                            Time time = Time.valueOf(localtime);
+                            LocalDate today = LocalDate.now();
+                            if (!today.isAfter(localdate)) {
 
-                            System.out.println(date);
-                            System.out.println(time);
-                            System.out.println(u.getUserid());
-                            //  Time time = men.spinTime.get
-                            boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time);
-                            if (exitoE == true) {
-                                men.crNom.setText("");
-                                men.crDir.setText("");
-                                men.crDes.setText("");
+                                Date date = Date.valueOf(localdate);
+                                LocalTime localtime = men.dateTimePicker.timePicker.getTime();
+                                Time time = Time.valueOf(localtime);
 
-                                JOptionPane.showMessageDialog(men, "Evento realizado con éxito.");
+                                System.out.println(date);
+                                System.out.println(time);
+                                System.out.println(u.getUserid());
+                                //  Time time = men.spinTime.get
+                                boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time);
+                                if (exitoE == true) {
+                                    men.crNom.setText("");
+                                    men.crDir.setText("");
+                                    men.crDes.setText("");
+                                    men.dateTimePicker.datePicker.setText("");
+                                    men.dateTimePicker.timePicker.setText("");
+                                    men.comboCat.setSelectedIndex(0);
+
+                                    JOptionPane.showMessageDialog(men, "Evento realizado con éxito.");
+                                } else {
+                                    JOptionPane.showMessageDialog(men, "Fallo al crear evento.");
+                                }
                             } else {
-                                JOptionPane.showMessageDialog(men, "Fallo al crear evento.");
+                                JOptionPane.showMessageDialog(men, "La fecha no puede ser anterior a la actual.");
                             }
+                            //  ZoneId defaultZoneId = ZoneId.systemDefault();
+
                         }
                     }
 
                     break;
                 //VOLVER A LOGIN
+                case "btnCom2":
+                    System.out.println(ev.getEventid());
+                    System.out.println(usuarioactual);
+                    model.Interes(ev.getEventid(), usuarioactual);
+
+                    JOptionPane.showMessageDialog(men, "Siguiendo evento.");
+                    break;
                 case "btnCerrarS":
                     men.dispose();
                     log.setVisible(true);
@@ -659,7 +773,13 @@ public class Controlador implements ActionListener, Serializable {
                     }
                     break;
                 case "Asistire":
+                    int event = model.Participantes(ev.getEventid());
                     model.Participacion(ev.getEventid(), u.getUserid());
+                    men.part1.setText("");
+                    int part = model.Participantes(event);
+                    men.part1.setText(part + "");
+                    JOptionPane.showMessageDialog(men, "Asistencia confirmada.");
+
                     break;
 
             }

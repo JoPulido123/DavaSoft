@@ -41,6 +41,7 @@ public class FormLogin extends javax.swing.JFrame  {
         Registrar = new javax.swing.JButton();
         Iniciar = new javax.swing.JButton();
         btnAnon = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         salir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -92,6 +93,7 @@ public class FormLogin extends javax.swing.JFrame  {
         Registrar.setBackground(new java.awt.Color(0, 204, 204));
         Registrar.setBorder(null);
         Registrar.setContentAreaFilled(false);
+        Registrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         Registrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         Registrar.setForeground(new java.awt.Color(255, 255, 255));
         Registrar.setOpaque(true);
@@ -102,6 +104,7 @@ public class FormLogin extends javax.swing.JFrame  {
         Iniciar.setBackground(new java.awt.Color(0, 204, 204));
         Iniciar.setBorder(null);
         Iniciar.setContentAreaFilled(false);
+        Iniciar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         Iniciar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         Iniciar.setForeground(new java.awt.Color(255, 255, 255));
         Iniciar.setOpaque(true);
@@ -113,18 +116,34 @@ public class FormLogin extends javax.swing.JFrame  {
         btnAnon.setText("Entrar como Anónimo");
         btnAnon.setActionCommand("btnAnon");
         btnAnon.setBorder(null);
+        btnAnon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(btnAnon, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 439, 160, 30));
 
         jPanel1.add(jPanel2, new java.awt.GridBagConstraints());
 
-        salir.setText("jButton1");
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        salir.setBackground(new java.awt.Color(31, 174, 255));
+        salir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icons8_close_window_50px.png"))); // NOI18N
+        salir.setBorder(null);
+        salir.setContentAreaFilled(false);
+        salir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        salir.setOpaque(true);
         salir.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 salirActionPerformed(evt);
             }
         });
-        jPanel1.add(salir, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        jPanel3.add(salir, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        jPanel1.add(jPanel3, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -177,6 +196,7 @@ public class FormLogin extends javax.swing.JFrame  {
     public javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     public javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton salir;

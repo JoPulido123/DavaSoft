@@ -131,21 +131,23 @@ public class Registrar extends javax.swing.JFrame  {
         });
         jPanel2.add(txtRegCel, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 280, 310, 40));
 
-        btnRegistrar.setBackground(new java.awt.Color(0, 204, 204));
-        btnRegistrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrarse");
         btnRegistrar.setActionCommand("btnRegistrar");
+        btnRegistrar.setBackground(new java.awt.Color(0, 204, 204));
         btnRegistrar.setBorder(null);
+        btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         jPanel2.add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 420, 200, 40));
 
-        btnVolver.setBackground(new java.awt.Color(0, 204, 204));
-        btnVolver.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setText("Volver");
         btnVolver.setActionCommand("btnVolver");
+        btnVolver.setBackground(new java.awt.Color(0, 204, 204));
         btnVolver.setBorder(null);
         btnVolver.setContentAreaFilled(false);
+        btnVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVolver.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setOpaque(true);
         jPanel2.add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 360, 200, 40));
 
