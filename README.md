@@ -1,2 +1,1 @@
-# ProyectoSoftware
-Proyecto Final: Sistema Proinim
+Sistema de Registro de Eventos
