@@ -1,5 +1,6 @@
 package practicaeventos;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Rene Navarro
  */
-public class Database {
+public class Database implements Serializable{
 
     public Connection con;
 

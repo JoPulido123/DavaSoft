@@ -5,6 +5,7 @@
  */
 package practicaeventos;
 
+import java.io.FileInputStream;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -19,7 +20,10 @@ import java.util.List;
  * @author jopul
  */
 public interface proxyInterface extends Remote {
-    public boolean RegistrarEvento(String userid,String nombre,String desc,String categoria,String direccion,Date fecha,Time hora) throws SQLException,RemoteException;
+    public List<Evento>EventoAvanzado(String palabra) throws SQLException,RemoteException;
+    public List<Evento>EventoXPrecio (int precio)throws SQLException,RemoteException;
+    public List<Evento> EventoXFecha(Date fecha) throws SQLException,RemoteException;
+    public boolean RegistrarEvento(String userid,String nombre,String desc,String categoria,String direccion,Date fecha,Time hora,byte[] bits,int precio) throws SQLException,RemoteException;
     public boolean ModificarEvento(int eventid,String name,String desc,String address,Date date,Time time) throws SQLException,RemoteException;
     public List<Evento> ObtenerEventos() throws SQLException,RemoteException;
     public boolean RegistrarComentarios(int eventid,String userid,String comentario) throws SQLException,RemoteException;
@@ -36,4 +40,7 @@ public interface proxyInterface extends Remote {
     public boolean BorrarEvento(int eventid) throws SQLException,RemoteException;
     public void Interes(int eventid,String userid) throws SQLException,RemoteException;
     public List<Evento> Siguiendo (String userid) throws SQLException,RemoteException;
+    public void InsertarPref(String userid,ArrayList<String> categorias) throws SQLException,RemoteException;
+     public List<Evento>MisCategorias(String userid) throws SQLException,RemoteException;
+    // public ArrayList CategoriasP(String userid) throws SQLException,RemoteException;
 }

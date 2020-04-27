@@ -55,6 +55,8 @@ public class Registrar extends javax.swing.JFrame  {
         txtRegCel = new javax.swing.JTextField();
         btnRegistrar = new javax.swing.JButton();
         btnVolver = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jCategore = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -74,7 +76,7 @@ public class Registrar extends javax.swing.JFrame  {
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 70, 310, 40));
 
         txtUser.setBackground(new java.awt.Color(102, 153, 255));
-        txtUser.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtUser.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         txtUser.setForeground(new java.awt.Color(255, 255, 255));
         txtUser.setBorder(null);
         jPanel2.add(txtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 310, 40));
@@ -83,7 +85,7 @@ public class Registrar extends javax.swing.JFrame  {
         jPanel2.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 310, 10));
 
         txtPass.setBackground(new java.awt.Color(102, 153, 255));
-        txtPass.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtPass.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         txtPass.setForeground(new java.awt.Color(255, 255, 255));
         txtPass.setBorder(null);
         jPanel2.add(txtPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 310, 40));
@@ -96,7 +98,7 @@ public class Registrar extends javax.swing.JFrame  {
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 310, 40));
 
         txtRegNo.setBackground(new java.awt.Color(102, 153, 255));
-        txtRegNo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegNo.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         txtRegNo.setForeground(new java.awt.Color(255, 255, 255));
         txtRegNo.setBorder(null);
         txtRegNo.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -111,7 +113,7 @@ public class Registrar extends javax.swing.JFrame  {
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 240, 310, 40));
 
         txtRegDi.setBackground(new java.awt.Color(102, 153, 255));
-        txtRegDi.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegDi.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         txtRegDi.setForeground(new java.awt.Color(255, 255, 255));
         txtRegDi.setBorder(null);
         jPanel2.add(txtRegDi, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 310, 40));
@@ -121,7 +123,7 @@ public class Registrar extends javax.swing.JFrame  {
         jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, 310, 40));
 
         txtRegCel.setBackground(new java.awt.Color(102, 153, 255));
-        txtRegCel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        txtRegCel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         txtRegCel.setForeground(new java.awt.Color(255, 255, 255));
         txtRegCel.setBorder(null);
         txtRegCel.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -131,25 +133,45 @@ public class Registrar extends javax.swing.JFrame  {
         });
         jPanel2.add(txtRegCel, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 280, 310, 40));
 
-        btnRegistrar.setText("Registrarse");
-        btnRegistrar.setActionCommand("btnRegistrar");
         btnRegistrar.setBackground(new java.awt.Color(0, 204, 204));
-        btnRegistrar.setBorder(null);
-        btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRegistrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegistrar.setText("Registrarse");
+        btnRegistrar.setActionCommand("btnRegistrar");
+        btnRegistrar.setBorder(null);
+        btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 420, 200, 40));
 
+        btnVolver.setBackground(new java.awt.Color(0, 204, 204));
+        btnVolver.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setText("Volver");
         btnVolver.setActionCommand("btnVolver");
-        btnVolver.setBackground(new java.awt.Color(0, 204, 204));
         btnVolver.setBorder(null);
         btnVolver.setContentAreaFilled(false);
         btnVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnVolver.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setOpaque(true);
         jPanel2.add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 360, 200, 40));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Categorías preferidas:");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 276, 160, 30));
+
+        jCategore.setBackground(new java.awt.Color(0, 204, 204));
+        jCategore.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jCategore.setForeground(new java.awt.Color(255, 255, 255));
+        jCategore.setText("Categorías");
+        jCategore.setActionCommand("CategPref");
+        jCategore.setBorder(null);
+        jCategore.setContentAreaFilled(false);
+        jCategore.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jCategore.setOpaque(true);
+        jCategore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCategoreActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jCategore, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 280, 80, 30));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -190,6 +212,10 @@ public class Registrar extends javax.swing.JFrame  {
             JOptionPane.showMessageDialog(this, "El teléfono deber ser númerico.");
         }
     }//GEN-LAST:event_txtRegCelKeyTyped
+
+    private void jCategoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCategoreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCategoreActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,9 +258,11 @@ public class Registrar extends javax.swing.JFrame  {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnRegistrar;
     public javax.swing.JButton btnVolver;
+    public javax.swing.JButton jCategore;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;

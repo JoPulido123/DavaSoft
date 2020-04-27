@@ -89,24 +89,24 @@ public class FormLogin extends javax.swing.JFrame  {
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icons8_location_120px.png"))); // NOI18N
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 350, 120));
 
-        Registrar.setText("Registrar");
         Registrar.setBackground(new java.awt.Color(0, 204, 204));
+        Registrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        Registrar.setForeground(new java.awt.Color(255, 255, 255));
+        Registrar.setText("Registrar");
         Registrar.setBorder(null);
         Registrar.setContentAreaFilled(false);
         Registrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        Registrar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        Registrar.setForeground(new java.awt.Color(255, 255, 255));
         Registrar.setOpaque(true);
         jPanel2.add(Registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 410, 160, 30));
 
+        Iniciar.setBackground(new java.awt.Color(0, 204, 204));
+        Iniciar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        Iniciar.setForeground(new java.awt.Color(255, 255, 255));
         Iniciar.setText("Entrar");
         Iniciar.setActionCommand("Iniciar");
-        Iniciar.setBackground(new java.awt.Color(0, 204, 204));
         Iniciar.setBorder(null);
         Iniciar.setContentAreaFilled(false);
         Iniciar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        Iniciar.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        Iniciar.setForeground(new java.awt.Color(255, 255, 255));
         Iniciar.setOpaque(true);
         jPanel2.add(Iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 370, 160, 30));
 

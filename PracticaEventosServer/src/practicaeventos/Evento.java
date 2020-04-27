@@ -5,9 +5,11 @@
  */
 package practicaeventos;
 
+import java.awt.Image;
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -20,6 +22,14 @@ public class Evento implements Serializable{
   String descripcion;
   String direccion;
 
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+    int  precio;
     public int getEventid() {
         return eventid;
     }
@@ -85,5 +95,14 @@ public class Evento implements Serializable{
     }
   Date fecha;
   Time hora;
+
+    public ImageIcon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(ImageIcon icon) {
+        this.icon = icon;
+    }
   String categoria;
+  ImageIcon icon;
 }
