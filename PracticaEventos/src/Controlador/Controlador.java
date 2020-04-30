@@ -54,18 +54,15 @@ import java.awt.Image;
 import practicaeventos.Usuario;
 import practicaeventos.proxyInterface;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -79,7 +76,7 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author jopul
  */
-public class Controlador implements ActionListener, Serializable {
+public class Controlador extends MapView implements ActionListener, Serializable{
 
     byte[] bytes = null;
 
@@ -102,8 +99,12 @@ public class Controlador implements ActionListener, Serializable {
     int precio;
     byte[] bytesArray = null;
     TextAutoCompleter ac;
-
-    public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model, Categorias categ) throws Exception {
+    //JFrame frame = new JFrame("Mapa");
+    
+    
+    
+ //------------------------------------------------------------------------------------
+    public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model, Categorias categ) throws Exception,IOException {
         this.men = men;
         this.model = model;
         this.log = log;
@@ -141,6 +142,7 @@ public class Controlador implements ActionListener, Serializable {
         men.crNom.addActionListener(this);
         men.crDir.addActionListener(this);
         men.crDes.addActionListener(this);
+        men.btnMapa.addActionListener(this);
 
         //BUSQUEDA
         men.radioTodos.addActionListener(this);
@@ -316,7 +318,7 @@ public class Controlador implements ActionListener, Serializable {
         });
 
     }
-
+ 
     public void Ocultar(String panel) {
         men.pnEvento.setVisible(false);
         men.pnReportes.setVisible(false);
@@ -361,65 +363,82 @@ public class Controlador implements ActionListener, Serializable {
 
         }
     }
+    //---MAPA-----
+    //MARKER
+    public Marker generateMarker(LatLng pos) {
+        Marker marker;
+        //MarkerLabel value = null;
+        MarkerOptions value = new MarkerOptions();
+        value.setClickable(true);
+        //value.setLabelString("hola");
+        marker = new Marker(map);
+        marker.setPosition(pos);
+        //map.setCenter(pos);
+        marker.setOptions(value);
+        //System.out.println("Graficado marker");
+        return marker;
+    }
+//Mapa
+    public void Mapa() {
+       JFrame frame = new JFrame("Tiendas Unison");
+       class Mapita extends MapView{
+        public Mapita(){
+            
+        
+        setOnMapReadyHandler(new MapReadyHandler() {
 
-    /*public void Mapa(String pString) {
+            @Override
+            public void onMapReady(MapStatus status) {
+                if(status==MapStatus.MAP_STATUS_OK){
+                    map = getMap();
+                    MapOptions mapOptions = new MapOptions();
+                    MapTypeControlOptions controlOptions = new MapTypeControlOptions();
+                    mapOptions.setMapTypeControlOptions(controlOptions);
+                    map.setOptions(mapOptions);
+                    map.setCenter(new LatLng(29.0817, -110.964));
+                    map.setZoom(12);
+                }
+            }
+        });
+        
+        System.out.print("Espere mientras se genera el mapa");
+        try {
+            for (int i = 0; i < 10; i++) {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.print(".");
+            }
 
-     JFrame frame = new JFrame("Hermosillo: " + pString);
-
-     // Setting of a ready handler to MapView object. onMapReady will be called when map initialization is done and
-     // the map object is ready to use. Current implementation of onMapReady customizes the map object.
-     setOnMapReadyHandler(new MapReadyHandler() {
-     @Override
-     public void onMapReady(MapStatus status) {
-     // Check if the map is loaded correctly
-     if (status == MapStatus.MAP_STATUS_OK) {
-     // Getting the associated map object
-     map = getMap();
-     MapOptions mapOptions = new MapOptions();
-     MapTypeControlOptions controlOptions = new MapTypeControlOptions();
-     controlOptions.setPosition(ControlPosition.BOTTOM_LEFT);
-     // mapOptions.
-     mapOptions.setMapTypeControlOptions(controlOptions);
-
-     map.setOptions(mapOptions);
-     map.setCenter(new LatLng(42.045527, -88.037659));
-     map.setZoom(10);
-
-     }
-     }
-     });
-     System.out.print("Espere mientras se genera el mapa ");
-     try {
-     for (int i = 0; i < 10; i++) {
-     TimeUnit.SECONDS.sleep(1);
-     System.out.print(".");
-     }
-     } catch (InterruptedException e1) {
-     // TODO Auto-generated catch block
-     e1.printStackTrace();
-     }
-     System.out.println("|");
-     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-     frame.add(this, BorderLayout.CENTER);
-     frame.setSize(700, 500);
-     frame.setLocationRelativeTo(null);
-     frame.setVisible(true);
-     }
-     */
-    /* class myTableCellRenderer extends DefaultTableCellRenderer {
-
-     @Override
-     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-     if(value instanceof ImageIcon){
-     Image image = (Image)value;
-     return image;
-     }
-     return super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column); 
-     }
-
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+           }
+        
+       
+       }
+        Mapita mapa = new Mapita();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.add(mapa, BorderLayout.CENTER);
+        //initComponents();
+        //setLayout(null);
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        int xSize = ((int) tk.getScreenSize().getWidth());
+        int ySize = ((int) tk.getScreenSize().getHeight());
+        frame.setSize(xSize, ySize);
+        // frame.setSize(700, 500);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
         
         
-     }*/
+        
+    }
+    
+    
+        
+        
+     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (yey == true) {
@@ -1253,6 +1272,11 @@ public class Controlador implements ActionListener, Serializable {
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
                     break;
+                case "btnMapa":
+                    Mapa();
+                    //Mapa mapa = new Mapa;
+                    break;
+                    
             }
         } catch (SQLException ex) {
             System.out.println(ex);
@@ -1262,3 +1286,9 @@ public class Controlador implements ActionListener, Serializable {
     }
 
 }
+
+    
+    
+    //PARA EL ALUMNO
+    
+
