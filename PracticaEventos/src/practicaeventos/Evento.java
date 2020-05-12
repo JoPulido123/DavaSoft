@@ -23,7 +23,17 @@ public class Evento implements Serializable{
   String descripcion;
   String direccion;
   Date fecha;
+ double log;
+ double lan;
 
+    public boolean isReportado() {
+        return reportado;
+    }
+
+    public void setReportado(boolean reportado) {
+        this.reportado = reportado;
+    }
+ boolean reportado;
     public int getPrecio() {
         return precio;
     }
@@ -107,6 +117,22 @@ public class Evento implements Serializable{
 
     public void setHora(Time hora) {
         this.hora = hora;
+    }
+
+    public double getLog() {
+        return log;
+    }
+
+    public void setLog(double log) {
+        this.log = log;
+    }
+
+    public double getLan() {
+        return lan;
+    }
+
+    public void setLan(double lan) {
+        this.lan = lan;
     }
   
   

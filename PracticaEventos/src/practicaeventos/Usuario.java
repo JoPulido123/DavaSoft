@@ -5,16 +5,27 @@
  */
 package practicaeventos;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  *
  * @author jopul
  */
-public class Usuario {
+public class Usuario implements Serializable{
     String userid;
     String nombre;
     String tel;
     String direc;
+    ArrayList siguiendo = new ArrayList();
 
+    public ArrayList getSiguiendo() {
+        return siguiendo;
+    }
+
+    public void setSiguiendo(ArrayList siguiendo) {
+        this.siguiendo = siguiendo;
+    }
 
 
     public String getUserid() {

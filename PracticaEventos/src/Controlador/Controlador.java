@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controlador;
 
 import Vistas.Categorias;
@@ -50,6 +45,11 @@ import practicaeventos.Evento;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import practicaeventos.Usuario;
 import practicaeventos.proxyInterface;
@@ -57,6 +57,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,6 +69,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -76,10 +78,12 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author jopul
  */
-public class Controlador extends MapView implements ActionListener, Serializable{
+public class Controlador extends MapView implements ActionListener, Serializable {
 
+    boolean notif = false;
     byte[] bytes = null;
-
+    double lat;
+    double lon;
     int longitudBytes;
     private static Map map;
     private Evento ev = new Evento();
@@ -100,17 +104,14 @@ public class Controlador extends MapView implements ActionListener, Serializable
     byte[] bytesArray = null;
     TextAutoCompleter ac;
     //JFrame frame = new JFrame("Mapa");
-    
-    
-    
- //------------------------------------------------------------------------------------
-    public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model, Categorias categ) throws Exception,IOException {
+
+    //------------------------------------------------------------------------------------
+    public Controlador(FormLogin log, Registrar reg, FormMenuPrincipal men, proxyInterface model, Categorias categ) throws Exception, IOException {
         this.men = men;
         this.model = model;
         this.log = log;
         this.reg = reg;
         this.categ = categ;
-       
 
         // DefaultTableModel dm = (DefaultTableModel) men.jEventos.getModel();
         log.txtUser.addActionListener(this);
@@ -143,17 +144,24 @@ public class Controlador extends MapView implements ActionListener, Serializable
         men.crDir.addActionListener(this);
         men.crDes.addActionListener(this);
         men.btnMapa.addActionListener(this);
+        men.Notific.addActionListener(this);
 
         //BUSQUEDA
         men.radioTodos.addActionListener(this);
         men.radioCateg.addActionListener(this);
         ac = new TextAutoCompleter(men.tsugeren);
         ac.addItem("Parillada");
+        ac.addItem("celebracion");
         ac.addItem("COVID");
+        ac.addItem("Albercada");
         ac.addItem("Fiesta");
+        ac.addItem("Pool Party");
         ac.addItem("Restaurante");
+        ac.addItem("Entrega");
         ac.addItem("Apoyo para ");
+        ac.addItem("los lagos");
         ac.addItem("Quinceañera");
+        ac.addItem("gratis");
         ac.addItem("Carne Asada");
         ac.addItem("Baile");
         ac.addItem("Draft");
@@ -162,6 +170,8 @@ public class Controlador extends MapView implements ActionListener, Serializable
         ac.addItem("San Angel");
         men.btClave.addActionListener(this);
         men.btCtria.addActionListener(this);
+        men.ubiM.addActionListener(this);
+
         ///Categorías
         men.espectaculos.addActionListener(this);
         men.educacion.addActionListener(this);
@@ -177,6 +187,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
         men.social.addActionListener(this);
 
         ///Cambios 
+        men.ubiM1.addActionListener(this);
+        men.btModi.addActionListener(this);
+        men.InImg1.addActionListener(this);
         men.btnCerrarS.addActionListener(this);
         men.btnCat.addActionListener(this);
         men.btnCrear.addActionListener(this);
@@ -196,7 +209,6 @@ public class Controlador extends MapView implements ActionListener, Serializable
         men.InImg.addActionListener(this);
         ListSelectionModel modelo = men.jEventos.getSelectionModel();
 
-      
         //MOSTRAR INFORMACIÓN DE EVENTO
         men.jEventos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(MouseEvent me) {
@@ -221,11 +233,15 @@ public class Controlador extends MapView implements ActionListener, Serializable
                             System.out.println(part);
                             Evento aa = model.Informacion(event);
                             ev.setEventid(event);
+
                             String nombre = aa.getNomevento();
                             String descp = aa.getDescripcion();
                             String address = aa.getDireccion();
                             String date = aa.getFecha().toString();
                             String time = aa.getHora().toString();
+                            
+                            lat = aa.getLan();
+                            lon = aa.getLog();
                             Image Imag = aa.getIcon().getImage().getScaledInstance(men.ElblImg.getWidth(), men.ElblImg.getHeight(), Image.SCALE_SMOOTH);
                             ImageIcon icon = new ImageIcon(Imag);
 
@@ -237,13 +253,72 @@ public class Controlador extends MapView implements ActionListener, Serializable
                             }
                             men.nombre1.setText(nombre);
                             men.desc1.setText(descp);
-                            men.part1.setText(part + "");
+                            men.interes.setText(part + "");
                             men.fecha1.setText(date);
                             men.hora1.setText(time);
                             men.ElblImg.setIcon(icon);
                             men.ElblImg.updateUI();
 
                             men.labelDir.setText(address);
+                        }
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        /////MODIFICAR EVENTO PRUEBA 111111/////
+        men.jMod.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    try {
+                        int linea = men.jMod.getSelectedRow();
+                        if (linea == -1) {
+                            JOptionPane.showMessageDialog(men, "Seleccione un evento");
+                        } else {
+                            int event = Integer.parseInt((String) men.jMod.getValueAt(linea, 0));
+                            //Aca llamamos a la ventana que nos traera el los detalles del registro
+                            Ocultar("evMod");
+                            int part = model.Participantes(event);
+                            ev.setEventid(event);
+                            System.out.println(part);
+                            Evento aa = model.Informacion(event);
+                            men.modNom.setText("");
+                            men.modDes.setText("");
+                            men.modDir.setText("");
+                            men.modCos.setText("");
+                            men.modFoto.setUI(null);
+                            men.interes.setText("");
+                            //  men.jLCosto.setText("");
+                            //int selectedrow = men.jEventos.getSelectedRow();
+                            //int even = Integer.parseInt((String) men.jEventos.getValueAt(selectedrow, 0));
+
+                            String nombre = aa.getNomevento();
+                            String descp = aa.getDescripcion();
+                            String address = aa.getDireccion();
+                            String date = aa.getFecha().toString();
+                            String time = aa.getHora().toString();
+                            String catego = aa.getCategoria();
+                         
+
+                            int costo = aa.getPrecio();
+                            lat = aa.getLan();
+                            lon = aa.getLog();
+                            Image Imag = aa.getIcon().getImage().getScaledInstance(men.ElblImg.getWidth(), men.ElblImg.getHeight(), Image.SCALE_SMOOTH);
+                            ImageIcon icon = new ImageIcon(Imag);
+                            men.modDateTime.datePicker.setText(date);
+                            men.modDateTime.timePicker.setText(time);
+                            men.modNom.setText(nombre);
+                            men.modDes.setText(descp);
+                            men.modDir.setText(address);
+                            men.modFoto.setIcon(icon);
+                            men.modCos.setText(costo + "");
+                            men.modFoto.updateUI();
+
+                            // men.labelDir.setText(address);
                         }
 
                     } catch (SQLException ex) {
@@ -270,55 +345,51 @@ public class Controlador extends MapView implements ActionListener, Serializable
                 if (me.getClickCount() == 2) {
                     int seguro = JOptionPane.showConfirmDialog(men, "¿Desea eliminar este evento?", "Advertencia", JOptionPane.YES_NO_OPTION);
                     if (seguro == JOptionPane.YES_OPTION) {
-                        int linea = table.getSelectedRow();
-                        int event = Integer.parseInt((String) table.getValueAt(linea, 0));
-                        boolean exito = model.BorrarEvento(event);
-                        if (exito == true) {
-                            JOptionPane.showMessageDialog(men, "Evento borrado");
-                        } else {
-                            JOptionPane.showMessageDialog(men, "Error al querer borrar el evento.");
-                        }
-                    }
-                }
-            }
-        });
-////
-
-        //MODIFICAR EVENTO
-        men.jMod.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(KeyEvent ke) {
-
-                System.out.println(ke.getKeyCode());
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    int seguro = JOptionPane.showConfirmDialog(men, "¿Desea modificar este evento?", "Advertencia", JOptionPane.YES_NO_OPTION);
-                    if (seguro == JOptionPane.YES_OPTION) {
                         try {
-                            int linea = men.jMod.getSelectedRow();
-                            int event = Integer.parseInt((String) men.jMod.getValueAt(linea, 0));
-                            String nombre = men.jMod.getValueAt(linea, 1).toString();
-                            String desc = men.jMod.getValueAt(linea, 2).toString();
-                            String address = men.jMod.getValueAt(linea, 3).toString();
-                            String date = men.jMod.getValueAt(linea, 4).toString();
-                            String tiempo = men.jMod.getValueAt(linea, 5).toString();
-                            Date fecha = Date.valueOf(date);
-                            Time time = Time.valueOf(tiempo);
+                            int linea = table.getSelectedRow();
+                            int event = Integer.parseInt((String) table.getValueAt(linea, 0));
+                            List<Usuario> ussig = model.UsuariosSiguiendo(event);
+                            Evento eve = model.Informacion(event);
 
-                            boolean exito = model.ModificarEvento(event, nombre, desc, address, fecha, time);
+                            boolean exito = model.BorrarEvento(event);
                             if (exito == true) {
-                                JOptionPane.showMessageDialog(men, "Evento modificado");
+                                if (!ussig.isEmpty()) {
+                                    for (Usuario sigi : ussig) {
+                                        if (sigi.getUserid().equals(u.getNombre())) {
+                                            ArrayList notic = u.getSiguiendo();
+                                            notic.add("El evento " + eve.getNomevento() + "ha sido eliminado");
+                                        } else {
+                                            ArrayList notificaciones = sigi.getSiguiendo();
+                                            notificaciones.add("Se ha modificado el evento: " + eve.getNomevento());
+                                        }
+
+                                    }
+                                }
+
+                                JOptionPane.showMessageDialog(men, "Evento borrado");
                             } else {
-                                JOptionPane.showMessageDialog(men, "Error al modificar el evento,favor de no alterar el id.");
+                                JOptionPane.showMessageDialog(men, "Error al querer borrar el evento.");
                             }
                         } catch (SQLException ex) {
+                            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (RemoteException ex) {
                             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
             }
         });
+////men.
 
     }
- 
+
+    public static boolean isEmpty(JTable jTable) {
+        if (jTable != null && jTable.getModel() != null) {
+            return jTable.getModel().getRowCount() <= 0 ? true : false;
+        }
+        return false;
+    }
+
     public void Ocultar(String panel) {
         men.pnEvento.setVisible(false);
         men.pnReportes.setVisible(false);
@@ -328,11 +399,24 @@ public class Controlador extends MapView implements ActionListener, Serializable
         men.pnComentarios.setVisible(false);
         men.pnEventoD.setVisible(false);
         men.pnEventoM.setVisible(false);
+        men.pnREvento1.setVisible(false);
 
         switch (panel) {
             case "eventos":
-
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
                 men.pnEvento.setVisible(true);
+                break;
+            case "evMod":
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
+                men.pnREvento1.setVisible(true);
                 break;
             case "miseventos":
                 men.pnEvento.setVisible(true);
@@ -344,6 +428,11 @@ public class Controlador extends MapView implements ActionListener, Serializable
                 men.pnReportes.setVisible(true);
                 break;
             case "categorias":
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
                 men.pnlinicio.setVisible(true);
                 break;
             case "crearE":
@@ -351,18 +440,34 @@ public class Controlador extends MapView implements ActionListener, Serializable
                 break;
 
             case "evento":
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
                 men.pnEvento1.setVisible(true);
                 break;
 
             case "borrar":
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
                 men.pnEventoD.setVisible(true);
                 break;
             case "modificar":
+                if (!u.getSiguiendo().isEmpty()) {
+                    notif = true;
+                } else {
+                    notif = false;
+                }
                 men.pnEventoM.setVisible(true);
                 break;
 
         }
     }
+
     //---MAPA-----
     //MARKER
     public Marker generateMarker(LatLng pos) {
@@ -379,66 +484,209 @@ public class Controlador extends MapView implements ActionListener, Serializable
         return marker;
     }
 //Mapa
-    public void Mapa() {
-       JFrame frame = new JFrame("Tiendas Unison");
-       class Mapita extends MapView{
-        public Mapita(){
-            
-        
-        setOnMapReadyHandler(new MapReadyHandler() {
 
-            @Override
-            public void onMapReady(MapStatus status) {
-                if(status==MapStatus.MAP_STATUS_OK){
-                    map = getMap();
-                    MapOptions mapOptions = new MapOptions();
-                    MapTypeControlOptions controlOptions = new MapTypeControlOptions();
-                    mapOptions.setMapTypeControlOptions(controlOptions);
-                    map.setOptions(mapOptions);
-                    map.setCenter(new LatLng(29.0817, -110.964));
-                    map.setZoom(12);
+    public void CMapa() {
+        JFrame frame = new JFrame("Mapa");
+        class Mapita extends MapView {
+
+            public Mapita() {
+
+                setOnMapReadyHandler(new MapReadyHandler() {
+
+                    @Override
+                    public void onMapReady(MapStatus status) {
+                        if (status == MapStatus.MAP_STATUS_OK) {
+                            map = getMap();
+                            MapOptions mapOptions = new MapOptions();
+                            MapTypeControlOptions controlOptions = new MapTypeControlOptions();
+                            mapOptions.setMapTypeControlOptions(controlOptions);
+                            map.setOptions(mapOptions);
+                            map.setCenter(new LatLng(29.0817, -110.964));
+                            map.setZoom(12);
+
+                            // ------------------------------------
+                            map.addEventListener("click", new MapMouseEvent() {
+                                @Override
+                                public void onEvent(com.teamdev.jxmaps.MouseEvent mouseEvent) {
+                                    // Creating a new marker
+                                    final Marker marker = new Marker(map);
+                                    marker.setPosition(mouseEvent.latLng());
+                                    //GUARDAR COORDENADAS EN VARIABLES GLOBALES
+                                    int seguro = JOptionPane.showConfirmDialog(frame, "¿Desea colocar la dirección aquí?", "Marker", JOptionPane.YES_NO_OPTION);
+                                    if (seguro == JOptionPane.YES_OPTION) {
+                                        lat = mouseEvent.latLng().getLat();
+                                        lon = mouseEvent.latLng().getLng();
+                                        System.out.println("\t su lat: " + mouseEvent.latLng().getLat());
+                                        System.out.println("\t su log: " + mouseEvent.latLng().getLng());
+                                        frame.dispose();
+                                    }
+
+                                    // Adding event listener that intercepts clicking on marker
+                                    marker.addEventListener("click", new MapMouseEvent() {
+                                        @Override
+                                        public void onEvent(com.teamdev.jxmaps.MouseEvent mouseEvent) {
+                                            // Removing marker from the map
+                                            marker.remove();
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+
+                System.out.print("Espere mientras se genera el mapa");
+                try {
+                    for (int i = 0; i < 10; i++) {
+                        TimeUnit.SECONDS.sleep(1);
+                        System.out.print(".");
+                    }
+
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
                 }
-            }
-        });
-        
-        System.out.print("Espere mientras se genera el mapa");
-        try {
-            for (int i = 0; i < 10; i++) {
-                TimeUnit.SECONDS.sleep(1);
-                System.out.print(".");
+
             }
 
-        } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
         }
-        
-           }
-        
-       
-       }
         Mapita mapa = new Mapita();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         frame.setLocationRelativeTo(null);
         frame.add(mapa, BorderLayout.CENTER);
-        //initComponents();
-        //setLayout(null);
         Toolkit tk = Toolkit.getDefaultToolkit();
         int xSize = ((int) tk.getScreenSize().getWidth());
         int ySize = ((int) tk.getScreenSize().getHeight());
         frame.setSize(xSize, ySize);
-        // frame.setSize(700, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
-        
-        
     }
-    
-    
-        
-        
-     
+
+    public void VMapa(double lan, double longi) {
+        JFrame frame = new JFrame("Mapa");
+        System.out.println(lan + " " + longi);
+        class Mapota extends MapView {
+
+            public Mapota() {
+
+                setOnMapReadyHandler(new MapReadyHandler() {
+
+                    @Override
+                    public void onMapReady(MapStatus status) {
+                        if (status == MapStatus.MAP_STATUS_OK) {
+                            map = getMap();
+                            MapOptions mapOptions = new MapOptions();
+                            MapTypeControlOptions controlOptions = new MapTypeControlOptions();
+                            mapOptions.setMapTypeControlOptions(controlOptions);
+                            map.setOptions(mapOptions);
+                            map.setCenter(new LatLng(lan, longi));
+                            map.setZoom(18);
+
+                            // ------------------------------------
+                            map.addEventListener("click", new MapMouseEvent() {
+                                @Override
+                                public void onEvent(com.teamdev.jxmaps.MouseEvent mouseEvent) {
+                                    try {
+                                        //SACAR TODOS LOS EVENTOS
+                                        List<Evento> pos = model.ObtenerEventos();
+                                        System.out.println("Llegué a lista de eventos/mapa");
+                                        for (int i = 0; i < pos.size(); i++) {
+                                            LatLng hh = new LatLng(pos.get(i).getLan(), pos.get(i).getLog());
+                                            Marker ma = generateMarker(hh);
+                                            String[] markers = new String[pos.size()];
+                                            markers[i] = ma.getName();
+                                            System.out.println("Estoy en for mapa");
+                                            ma.addEventListener("click", new MapMouseEvent() {
+                                                @Override
+                                                public void onEvent(com.teamdev.jxmaps.MouseEvent mouseEvent) {
+                                                    try {
+                                                        LatLng coordenadas = mouseEvent.latLng();
+                                                        double latitud = coordenadas.getLat();
+                                                        double longitud = coordenadas.getLng();
+                                                        int eventd = model.Coordenadas(latitud, longitud);
+
+                                                        Ocultar("evento");
+                                                        men.nombre1.setText("");
+                                                        men.desc1.setText("");
+                                                        men.fecha1.setText("");
+                                                        men.hora1.setText("");
+                                                        men.ElblImg.setUI(null);
+                                                        men.jLCosto.setText("");
+                                                        Evento aa = model.Informacion(eventd);
+                                                        int part = model.Participantes(aa.getEventid());
+                                                        System.out.println(part);
+                                                        String nombre = aa.getNomevento();
+                                                        String descp = aa.getDescripcion();
+                                                        String address = aa.getDireccion();
+                                                        String date = aa.getFecha().toString();
+                                                        String time = aa.getHora().toString();
+                                                        lat = aa.getLan();
+                                                        lon = aa.getLog();
+                                                        Image Imag = aa.getIcon().getImage().getScaledInstance(men.ElblImg.getWidth(), men.ElblImg.getHeight(), Image.SCALE_SMOOTH);
+                                                        ImageIcon icon = new ImageIcon(Imag);
+
+                                                        int costo = aa.getPrecio();
+                                                        if (costo == 0) {
+                                                            men.jLCosto.setText("Gratuito");
+                                                        } else {
+                                                            men.jLCosto.setText(costo + "");
+                                                        }
+                                                        men.nombre1.setText(nombre);
+                                                        men.desc1.setText(descp);
+                                                        men.interes.setText(part + "");
+                                                        men.fecha1.setText(date);
+                                                        men.hora1.setText(time);
+                                                        men.ElblImg.setIcon(icon);
+                                                        men.ElblImg.updateUI();
+                                                        men.labelDir.setText(address);
+                                                        frame.dispose();
+                                                    } catch (SQLException ex) {
+                                                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                                                    } catch (RemoteException ex) {
+                                                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        // Adding event listener that intercepts clicking on marker
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+                System.out.print("Espere mientras se genera el mapa");
+                try {
+                    for (int i = 0; i < 10; i++) {
+                        TimeUnit.SECONDS.sleep(1);
+                        System.out.print(".");
+                    }
+
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+            }
+
+        }
+        Mapota mapa = new Mapota();
+
+        frame.setLocationRelativeTo(null);
+        frame.add(mapa, BorderLayout.CENTER);
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        int xSize = ((int) tk.getScreenSize().getWidth());
+        int ySize = ((int) tk.getScreenSize().getHeight());
+        frame.setSize(xSize, ySize);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (yey == true) {
@@ -491,15 +739,29 @@ public class Controlador extends MapView implements ActionListener, Serializable
                             return Object.class;
                     }
                 }
+
+                public boolean isCellEditable(int row, int column) {
+                    return false;//This causes all cells to be not editable
+                }
             };
             men.jEventos.setModel(model);
+            men.jMod.setModel(model);
             men.jEventos.getColumnModel().getColumn(0).setPreferredWidth(5);
             men.jEventos.getColumnModel().getColumn(1).setPreferredWidth(250);
             men.jEventos.getColumnModel().getColumn(2).setPreferredWidth(150);
             men.jEventos.getColumnModel().getColumn(3).setPreferredWidth(30);
             men.jEventos.getColumnModel().getColumn(4).setPreferredWidth(30);
 
+            //modi
+            men.jMod.getColumnModel().getColumn(0).setPreferredWidth(5);
+            men.jMod.getColumnModel().getColumn(1).setPreferredWidth(250);
+            men.jMod.getColumnModel().getColumn(2).setPreferredWidth(150);
+            men.jMod.getColumnModel().getColumn(3).setPreferredWidth(30);
+            men.jMod.getColumnModel().getColumn(4).setPreferredWidth(30);
+
             men.jEventos.setRowHeight(150);
+            men.jMod.setRowHeight(150);
+//            men.jEventos.getColumnModel().getColumn(0).
 
             dm = (DefaultTableModel) men.jEventos.getModel();
             dd = (DefaultTableModel) men.jEvD.getModel();
@@ -576,6 +838,11 @@ public class Controlador extends MapView implements ActionListener, Serializable
                             System.out.println(user + "2");
                             usuarioactual = user;
                             u.setUserid(user);
+                            if (!u.getSiguiendo().isEmpty()) {
+                                notif = true;
+                            } else {
+                                notif = false;
+                            }
                             //System.out.println(u.getNombre());
                             log.dispose();
                             Ocultar("categorias");
@@ -633,10 +900,14 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         String hora = String.valueOf(rscc.get(i).getHora());
                         ImageIcon icon = rscc.get(i).getIcon();
                         dd.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 //VISTA PRINCIPAL
                 case "btnModi":
+
                     Ocultar("modificar");
                     de.setRowCount(0);
                     //de.getDataVector().removeAllElements();
@@ -649,12 +920,15 @@ public class Controlador extends MapView implements ActionListener, Serializable
                     for (int k = 0; k < rscm.size(); k++) {
                         String id = String.valueOf(rscm.get(k).getEventid());
                         String title = rscm.get(k).getNomevento();
-                        //   String description = rscm.get(k).getDescripcion();
-                        String address = rscm.get(k).getDireccion();
+                        // String description = rs.get(q).getDescripcion();
                         String date = String.valueOf(rscm.get(k).getFecha());
                         String hora = String.valueOf(rscm.get(k).getHora());
-                        ImageIcon icon = rscm.get(k).getIcon();
-                        de.addRow(new Object[]{id, title, address, date, hora});
+                        Image Imag = rscm.get(k).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
+                        ImageIcon icon = new ImageIcon(Imag);
+                        de.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 // CATEGORÍAS
@@ -677,6 +951,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
 
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "teatro":
@@ -694,6 +971,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs1.get(w).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "educacion":
@@ -711,6 +991,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs2.get(r).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "cultura":
@@ -729,6 +1012,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                    }
                     break;
                 case "gastronomia":
                     Ocultar("eventos");
@@ -745,6 +1031,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs4.get(y).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "musica":
@@ -762,6 +1051,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs5.get(u).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "social":
@@ -779,6 +1071,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs6.get(o).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "cine":
@@ -797,6 +1092,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs7.get(p).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "taller":
@@ -814,6 +1112,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs8.get(a).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "infantil":
@@ -831,6 +1132,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rs9.get(s).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "deportes":
@@ -848,6 +1152,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rsa1.get(d).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "religion":
@@ -865,6 +1172,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rsa2.get(f).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 /////TERMINA CATEGORÍAS
@@ -886,7 +1196,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rsb1.get(g).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
-
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "btnCat":
@@ -912,6 +1224,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                    }
                     break;
 
                 case "btnSig":
@@ -933,6 +1248,10 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rscp.get(j).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        
+                    }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
                     }
 
                     break;
@@ -973,7 +1292,7 @@ public class Controlador extends MapView implements ActionListener, Serializable
                                 System.out.println(precio);
                                 System.out.println(u.getUserid());
                                 //  Time time = men.spinTime.get
-                                boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time, bytes, precio);
+                                boolean exitoE = model.RegistrarEvento(u.getUserid(), nombre, descrp, categoria, dir, date, time, bytes, precio, lat, lon);
                                 if (exitoE == true) {
                                     men.crNom.setText("");
                                     men.crDir.setText("");
@@ -1061,9 +1380,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                 case "Asistire":
                     // int event = model.Participantes(ev.getEventid());
                     model.Participacion(ev.getEventid(), u.getUserid());
-                    men.part1.setText("");
+                    men.interes.setText("");
                     int part = model.Participantes(ev.getEventid());
-                    men.part1.setText(part + "");
+                    men.interes.setText(part + "");
                     JOptionPane.showMessageDialog(men, "Asistencia confirmada.");
 
                     break;
@@ -1131,6 +1450,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                    }
                     break;
                 //CATEGORÍAS PREFERIDAS
                 case "CtePref":
@@ -1151,6 +1473,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                    }
 
                     // System.out.println(u.getNombre());
                     break;
@@ -1158,6 +1483,7 @@ public class Controlador extends MapView implements ActionListener, Serializable
                 case "InImg":
 
                     men.lblfoto.setIcon(null);
+                    men.modFoto.setIcon(null);
                     JFileChooser j = new JFileChooser();
                     j.setFileSelectionMode(JFileChooser.FILES_ONLY);//solo archivos y no carpetas
                     int estado = j.showOpenDialog(null);
@@ -1181,7 +1507,8 @@ public class Controlador extends MapView implements ActionListener, Serializable
                                 Image icono = ImageIO.read(j.getSelectedFile()).getScaledInstance(men.lblfoto.getWidth(), men.lblfoto.getHeight(), Image.SCALE_DEFAULT);
                                 men.lblfoto.setIcon(new ImageIcon(icono));
                                 men.lblfoto.updateUI();
-
+                                men.modFoto.setIcon(new ImageIcon(icono));
+                                men.modFoto.updateUI();
                             } catch (IOException ex) {
                                 JOptionPane.showMessageDialog(men, "imagen: " + ex);
                             }
@@ -1202,7 +1529,7 @@ public class Controlador extends MapView implements ActionListener, Serializable
                     if (men.radioGr.isSelected()) {
                         precio = 0;
                     } else if (men.radioPre.isSelected()) {
-                       precio = men.jSlider1.getValue();
+                        precio = men.jSlider1.getValue();
                     }
                     System.out.println(precio);
                     List<Evento> rsww = model.EventoXPrecio(precio);
@@ -1217,25 +1544,37 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
                     }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                    }
                     break;
                 //BUSCAR POR FECHA
                 case "buscarFe":
                     dm.setRowCount(0);
+                    java.util.Date fec = men.jDateChooser1.getDate();
+                    java.util.Date olo = new java.util.Date();
+                    if (fec.before(olo)) {
+                        JOptionPane.showMessageDialog(men, "Seleccione una fecha posterior a ala actual");
+                    } else {
+                        java.sql.Date sqldate = new java.sql.Date(men.jDateChooser1.getDate().getTime());
 
-                    java.sql.Date sqldate = new java.sql.Date(men.jDateChooser1.getDate().getTime());
+                        List<Evento> rser = model.EventoXFecha(sqldate);
 
-                    List<Evento> rser = model.EventoXFecha(sqldate);
-
-                    for (int re = 0; re < rser.size(); re++) {
-                        String id = String.valueOf(rser.get(re).getEventid());
-                        String title = rser.get(re).getNomevento();
-                        String description = rser.get(re).getDescripcion();
-                        String date = String.valueOf(rser.get(re).getFecha());
-                        String hora = String.valueOf(rser.get(re).getHora());
-                        Image Imag = rser.get(re).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
-                        ImageIcon icon = new ImageIcon(Imag);
-                        dm.addRow(new Object[]{id, icon, title, date, hora});
+                        for (int re = 0; re < rser.size(); re++) {
+                            String id = String.valueOf(rser.get(re).getEventid());
+                            String title = rser.get(re).getNomevento();
+                            String description = rser.get(re).getDescripcion();
+                            String date = String.valueOf(rser.get(re).getFecha());
+                            String hora = String.valueOf(rser.get(re).getHora());
+                            Image Imag = rser.get(re).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
+                            ImageIcon icon = new ImageIcon(Imag);
+                            dm.addRow(new Object[]{id, icon, title, date, hora});
+                        }
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
+
                     break;
                 case "btCtria":
                     dm.setRowCount(0);
@@ -1252,6 +1591,9 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rsgg.get(ki).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                    }
+                    if (isEmpty(men.jEventos) == true) {
+                        JOptionPane.showMessageDialog(men, "No se encontraron eventos");
                     }
                     break;
                 case "btClave":
@@ -1270,25 +1612,108 @@ public class Controlador extends MapView implements ActionListener, Serializable
                         Image Imag = rsdd.get(zv).getIcon().getImage().getScaledInstance(men.jEventos.getColumnModel().getColumn(1).getWidth(), 130, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(Imag);
                         dm.addRow(new Object[]{id, icon, title, date, hora});
+                        if (isEmpty(men.jEventos) == true) {
+                            JOptionPane.showMessageDialog(men, "No se encontraron eventos");
+                        }
                     }
                     break;
                 case "btnMapa":
-                    Mapa();
-                    //Mapa mapa = new Mapa;
+                    System.out.println(ev.getLan() + " " + ev.getLog());
+                    VMapa(lat, lon);
                     break;
-                    
+                case "ubiM":
+                    CMapa();
+                    break;
+                case "btModi":
+                    int event = ev.getEventid();
+                    List<Usuario> ussig = model.UsuariosSiguiendo(event);
+                    String nom = men.modNom.getText();
+                    String desc = men.modDes.getText();
+                    String address = men.modDir.getText();
+                    LocalDate fecha = men.modDateTime.datePicker.getDate();
+                    String cate = men.modCate.getSelectedItem().toString();
+                    /* javax.swing.Icon iconx =  men.modFoto.getIcon();
+                     BufferedImage  imagen = new BufferedImage(iconx.getIconWidth(),iconx.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+                     ByteArrayOutputStream b = new ByteArrayOutputStream();
+                     ImageIO.write(imagen,".jpg",b);
+                     bytes = b.toByteArray();*/
+                    int dolar = Integer.parseInt(men.modCos.getText());
+                    LocalDate today = LocalDate.now();
+                    if (fecha.isAfter(today)) {
+                        Date date = Date.valueOf(fecha);
+                        LocalTime localtime = men.modDateTime.timePicker.getTime();
+                        Time time = Time.valueOf(localtime);
+                        System.out.println(bytes);
+                        boolean success = model.ModificarEvento(event, nom, desc, address, date, time, cate, bytes, dolar, lat, lon);
+                        if (success == true) {
+                            if (!ussig.isEmpty()) {
+                                for (Usuario sigi : ussig) {
+                                    if (sigi.getUserid().equals(u.getUserid())) {
+                                        ArrayList notic = u.getSiguiendo();
+                                        notic.add("-Se ha modificado el evento: " + nom);
+                                    } else {
+                                        ArrayList notificaciones = sigi.getSiguiendo();
+                                        notificaciones.add("-Se ha modificado el evento: " + nom);
+                                    }
+
+                                }
+                            }
+
+                            JOptionPane.showMessageDialog(men, "Evento modificado");
+                        } else {
+                            JOptionPane.showMessageDialog(men, "Error al modificar el evento,favor de no alterar el id.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(men, "El evento tiene que ser posterior a la fecha actual.");
+                    }
+
+                    break;
+                case "ubiM1":
+                    CMapa();
+                    break;
+                case "notifi":
+                    if (notif == true) {
+                        JFrame frame = new JFrame("Notificaciones");
+                        JTextArea txt = new JTextArea();
+
+                        for (int i = 0; i < u.getSiguiendo().size(); i++) {
+                            txt.setText((String) u.getSiguiendo().get(i));
+                        }
+                         txt.setBackground(new java.awt.Color(32, 136, 203));
+                        txt.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                        txt.setForeground(new java.awt.Color(255, 255, 255));
+                        txt.setEditable(false);
+                        frame.setLocationRelativeTo(null);
+                        frame.add(txt, BorderLayout.CENTER);
+                        Toolkit tk = Toolkit.getDefaultToolkit();
+                        frame.setSize(430, 400);
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                    } else {
+                        JFrame frame = new JFrame("Notificaciones");
+                        JTextArea txt = new JTextArea();
+                        txt.setText("Usted no tiene ninguna notificación.");
+                        txt.setEditable(false);
+                        txt.setBackground(new java.awt.Color(32, 136, 203));
+                        txt.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                        txt.setForeground(new java.awt.Color(255, 255, 255));
+                        frame.setLocationRelativeTo(null);
+                        frame.add(txt, BorderLayout.CENTER);
+                        Toolkit tk = Toolkit.getDefaultToolkit();
+                        frame.setSize(430, 400);
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                    }
+                    break;
+
             }
         } catch (SQLException ex) {
             System.out.println(ex);
         } catch (RemoteException ex) {
             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
 }
-
-    
-    
-    //PARA EL ALUMNO
-    
-

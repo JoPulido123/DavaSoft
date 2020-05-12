@@ -21,13 +21,12 @@ import java.util.List;
 public interface proxyInterface {
     public List<Evento>EventoAvanzado(String palabra) throws SQLException,RemoteException;
     public List<Evento> EventoXPrecio(int precio) throws SQLException, RemoteException;
-
+    public int Coordenadas (double lat,double longitud) throws SQLException,RemoteException;
     public List<Evento> EventoXFecha(Date fecha) throws SQLException, RemoteException;
+     public List<Usuario> UsuariosSiguiendo(int eventid) throws SQLException,RemoteException;
+    public boolean RegistrarEvento(String userid, String nombre, String desc, String categoria, String direccion, Date fecha, Time hora, byte[] bits, int precio,double lat,double log) throws SQLException, RemoteException;
 
-    public boolean RegistrarEvento(String userid, String nombre, String desc, String categoria, String direccion, Date fecha, Time hora, byte[] bits, int precio) throws SQLException, RemoteException;
-
-    public boolean ModificarEvento(int eventid, String name, String desc, String address, Date date, Time time) throws SQLException;
-
+    public boolean ModificarEvento(int eventid, String name, String desc, String address, Date date, Time time,String cateogry,byte[] bits,int precio,double lat,double log) throws SQLException, RemoteException;
     public List<Evento> ObtenerEventos() throws SQLException;
 
     public boolean RegistrarComentarios(int eventid, String userid, String comentario) throws SQLException;
