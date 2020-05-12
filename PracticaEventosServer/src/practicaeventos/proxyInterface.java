@@ -20,27 +20,52 @@ import java.util.List;
  * @author jopul
  */
 public interface proxyInterface extends Remote {
-    public List<Evento>EventoAvanzado(String palabra) throws SQLException,RemoteException;
-    public List<Evento>EventoXPrecio (int precio)throws SQLException,RemoteException;
-    public List<Evento> EventoXFecha(Date fecha) throws SQLException,RemoteException;
-    public boolean RegistrarEvento(String userid,String nombre,String desc,String categoria,String direccion,Date fecha,Time hora,byte[] bits,int precio) throws SQLException,RemoteException;
-    public boolean ModificarEvento(int eventid,String name,String desc,String address,Date date,Time time) throws SQLException,RemoteException;
-    public List<Evento> ObtenerEventos() throws SQLException,RemoteException;
-    public boolean RegistrarComentarios(int eventid,String userid,String comentario) throws SQLException,RemoteException;
-    public ArrayList ObtenerComentarios(int eventid) throws SQLException,RemoteException;
-    public boolean RegistrarReporte(int eventid,String userid,String detalles) throws SQLException,RemoteException;
-    public ArrayList ObtenerReporte(int eventid) throws SQLException,RemoteException;
-    public boolean RegistrarUsuario(String userid,String pass,String nombre,String direc,String telef) throws SQLException,RemoteException;
-    public boolean VerificarUsuario(String userid,String pass) throws SQLException,RemoteException;
-    public List<Evento> FiltrarEventos(String categoria) throws SQLException,RemoteException;
-    public List<Evento> MisEventos(String userid) throws SQLException,RemoteException;
-    public void Participacion(int eventid,String userid) throws SQLException,RemoteException;
-    public int Participantes(int eventid) throws SQLException,RemoteException;
-    public Evento Informacion(int eventid) throws SQLException,RemoteException;
-    public boolean BorrarEvento(int eventid) throws SQLException,RemoteException;
-    public void Interes(int eventid,String userid) throws SQLException,RemoteException;
-    public List<Evento> Siguiendo (String userid) throws SQLException,RemoteException;
-    public void InsertarPref(String userid,ArrayList<String> categorias) throws SQLException,RemoteException;
-     public List<Evento>MisCategorias(String userid) throws SQLException,RemoteException;
+    public List<Usuario> UsuariosSiguiendo(int eventid) throws SQLException,RemoteException;
+    
+    public List<Evento> EventoAvanzado(String palabra) throws SQLException, RemoteException;
+
+    public List<Evento> EventoXPrecio(int precio) throws SQLException, RemoteException;
+
+    public List<Evento> EventoXFecha(Date fecha) throws SQLException, RemoteException;
+
+    public int Coordenadas(double lat, double longitud) throws SQLException, RemoteException;
+
+    public boolean RegistrarEvento(String userid, String nombre, String desc, String categoria, String direccion, Date fecha, Time hora, byte[] bits, int precio, double lat, double log) throws SQLException, RemoteException;
+
+    public boolean ModificarEvento(int eventid, String name, String desc, String address, Date date, Time time,String cateogry,byte[] bits,int precio,double lat,double log) throws SQLException, RemoteException;
+
+    public List<Evento> ObtenerEventos() throws SQLException, RemoteException;
+
+    public boolean RegistrarComentarios(int eventid, String userid, String comentario) throws SQLException, RemoteException;
+
+    public ArrayList ObtenerComentarios(int eventid) throws SQLException, RemoteException;
+
+    public boolean RegistrarReporte(int eventid, String userid, String detalles) throws SQLException, RemoteException;
+
+    public ArrayList ObtenerReporte(int eventid) throws SQLException, RemoteException;
+
+    public boolean RegistrarUsuario(String userid, String pass, String nombre, String direc, String telef) throws SQLException, RemoteException;
+
+    public boolean VerificarUsuario(String userid, String pass) throws SQLException, RemoteException;
+
+    public List<Evento> FiltrarEventos(String categoria) throws SQLException, RemoteException;
+
+    public List<Evento> MisEventos(String userid) throws SQLException, RemoteException;
+
+    public void Participacion(int eventid, String userid) throws SQLException, RemoteException;
+
+    public int Participantes(int eventid) throws SQLException, RemoteException;
+
+    public Evento Informacion(int eventid) throws SQLException, RemoteException;
+
+    public boolean BorrarEvento(int eventid) throws SQLException, RemoteException;
+
+    public void Interes(int eventid, String userid) throws SQLException, RemoteException;
+
+    public List<Evento> Siguiendo(String userid) throws SQLException, RemoteException;
+
+    public void InsertarPref(String userid, ArrayList<String> categorias) throws SQLException, RemoteException;
+
+    public List<Evento> MisCategorias(String userid) throws SQLException, RemoteException;
     // public ArrayList CategoriasP(String userid) throws SQLException,RemoteException;
 }

@@ -21,7 +21,33 @@ public class Evento implements Serializable{
   String nomevento;
   String descripcion;
   String direccion;
+  double lan;
+  double log;
+  boolean reportado;
 
+    public boolean isReportado() {
+        return reportado;
+    }
+
+    public void setReportado(boolean reportado) {
+        this.reportado = reportado;
+    }
+
+    public double getLan() {
+        return lan;
+    }
+
+    public void setLan(double lan) {
+        this.lan = lan;
+    }
+
+    public double getLog() {
+        return log;
+    }
+
+    public void setLog(double log) {
+        this.log = log;
+    }
     public int getPrecio() {
         return precio;
     }

@@ -94,6 +94,10 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                     Image newimg = img.getScaledInstance(140, 170, java.awt.Image.SCALE_SMOOTH);
                     ImageIcon newicon = new ImageIcon(newimg);
                     ev.setIcon(newicon);
+                    ev.setPrecio(rs.getInt(10));
+                    ev.setLan(rs.getDouble(11));
+                    ev.setLog(rs.getDouble(12));
+                    ev.setReportado(rs.getBoolean(13));
 
                     aa.add(ev);
                 }
@@ -110,7 +114,8 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
             System.out.println(ex);
 
         }
-        return null;
+        List<Evento> aa = new ArrayList<Evento>();
+        return aa;
 
     }
 
@@ -280,11 +285,11 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
     }
 
     @Override
-    public boolean RegistrarEvento(String userid, String nombre, String desc, String categoria, String direccion, Date fecha, Time hora, byte[] bits, int precio) throws SQLException, RemoteException {
+    public boolean RegistrarEvento(String userid, String nombre, String desc, String categoria, String direccion, Date fecha, Time hora, byte[] bits, int precio,double lat,double log) throws SQLException, RemoteException {
         try {
 
             try (PreparedStatement stmt = db.con.prepareStatement("INSERT INTO evento"
-                    + " VALUES (DEFAULT,?,?,?,?,?,?,?,?,?)")) {
+                    + " VALUES (DEFAULT,?,?,?,?,?,?,?,?,?,?,?,?)")) {
 
                 stmt.setString(1, userid);
                 stmt.setString(2, nombre);
@@ -296,7 +301,9 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                 stmt.setBytes(8, bits);
                 // stmt.setBinaryStream(8, fis, longitudBytes);
                 stmt.setInt(9, precio);
-
+                stmt.setDouble(10, lat);
+                stmt.setDouble(11, log);
+                stmt.setBoolean(12, false);
                 System.out.println(stmt);
                 stmt.execute();
                 System.out.println("Completo");
@@ -312,10 +319,11 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
     }
 
     @Override
-    public boolean ModificarEvento(int eventid, String name, String desc, String address, Date date, Time time) throws SQLException, RemoteException {
+    public boolean ModificarEvento(int eventid, String name, String desc, String address, Date date, Time time,String category,byte[] bits,int precio,double lat,double log) throws SQLException, RemoteException {
         try {
 
-            try (PreparedStatement stmt = db.con.prepareStatement("UPDATE evento SET name = ?,description = ?,address = ?,date = ?,time = ? WHERE eventid = ? ")) {
+            try (PreparedStatement stmt = db.con.prepareStatement("UPDATE evento SET name = ?,description = ?,address = ?,date = ?,time = ?,category = ?,image = ?,price = ?,latitud = ?,longitud = ?,"
+                    + " reported = ? WHERE eventid = ? ")) {
 
                 //   stmt.setString(1, eventid);
                 stmt.setString(1, name);
@@ -323,7 +331,13 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                 stmt.setString(3, address);
                 stmt.setDate(4, date);
                 stmt.setTime(5, time);
-                stmt.setInt(6, eventid);
+                stmt.setString(6, category);
+                stmt.setBytes(7,bits);
+                stmt.setInt(8, precio);
+                stmt.setDouble(9,lat);
+                stmt.setDouble(10, log);
+                stmt.setBoolean(11, false);
+                stmt.setInt(12, eventid);
                 System.out.println(stmt);
                 stmt.executeUpdate();
                 System.out.println("Completo");
@@ -371,6 +385,9 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                     ImageIcon newicon = new ImageIcon(newimg);
                     ev.setIcon(newicon);
                     ev.setPrecio(rs.getInt(10));
+                    ev.setLan(rs.getDouble(11));
+                    ev.setLog(rs.getDouble(12));
+                    ev.setReportado(rs.getBoolean(13));
                     if (!date.before(fechaactual)) {
                         aa.add(ev);
                     }
@@ -389,7 +406,8 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
             System.out.println(ex);
 
         }
-        return null;
+        List<Evento> aa = new ArrayList<Evento>();
+        return aa;
     }
 
     @Override
@@ -423,6 +441,9 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                     ImageIcon newicon = new ImageIcon(newimg);
                     ev.setIcon(newicon);
                     ev.setPrecio(rs.getInt(10));
+                    ev.setLan(rs.getDouble(11));
+                    ev.setLog(rs.getDouble(12));
+                    ev.setReportado(rs.getBoolean(13));
                     aa.add(ev);
                 }
                 // SerRS result = new SerRS(rs);
@@ -437,7 +458,8 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
             System.out.println(ex);
 
         }
-        return null;
+        List<Evento> aa = new ArrayList<Evento>();
+        return aa;
     }
 
     @Override
@@ -521,6 +543,9 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                     ImageIcon newicon = new ImageIcon(newimg);
                     ev.setIcon(newicon);
                     ev.setPrecio(rs.getInt(10));
+                    ev.setLan(rs.getDouble(11));
+                    ev.setLog(rs.getDouble(12));
+                    ev.setReportado(rs.getBoolean(13));
 
                 }
                 // SerRS result = new SerRS(rs);
@@ -700,7 +725,8 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
             System.out.println(ex);
 
         }
-        return null;
+        List<Evento> aa = new ArrayList<Evento>();
+        return aa;
     }
 
     @Override
@@ -796,10 +822,14 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
       
         try {
 
-            try (PreparedStatement stmt = db.con.prepareStatement("SELECT eventid FROM evento WHERE position(? in name) > 0 OR position (? in description)>0")) {
+            try (PreparedStatement stmt = db.con.prepareStatement("SELECT eventid FROM evento WHERE position(LOWER (?) in name) > 0 OR position (LOWER(?) in description)>0 \n" +
+"OR position(initcap (?) in name) > 0 OR position(initcap (?) in description) > 0 OR position(LOWER(?) in address) > 0")) {
 
                 stmt.setString(1, palabra);
                 stmt.setString(2, palabra);
+                stmt.setString(3, palabra);
+                stmt.setString(4, palabra);
+                stmt.setString(5, palabra);
                 ResultSet rs = stmt.executeQuery();
                 ArrayList al = new ArrayList();
                 List<Evento> aa = new ArrayList<Evento>();
@@ -814,6 +844,72 @@ public class modelo extends java.rmi.server.UnicastRemoteObject implements proxy
                 for (int i = 0; i < al.size(); i++) {
                     Evento ev = Informacion((int) al.get(i));
                     aa.add(ev);
+                }
+                return aa;
+                // SerRS result = new SerRS(rs);
+
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+
+        }
+        return null;
+    }
+
+    @Override
+    public int Coordenadas(double lat,double longitud) throws SQLException, RemoteException {
+    try {
+              
+            try (PreparedStatement stmt = db.con.prepareStatement("SELECT eventid FROM evento WHERE latitud = ? AND longitud = ?")) {
+                int eventoid = 0;
+                stmt.setDouble(1, lat);
+                stmt.setDouble(2, longitud);
+                ResultSet rs = stmt.executeQuery();
+               
+                System.out.println("Completo");
+
+                while (rs.next()) {
+                     eventoid = rs.getInt(1);
+                   
+                }
+                stmt.close();
+                rs.close();
+                
+                return eventoid;
+                // SerRS result = new SerRS(rs);
+
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Usuario> UsuariosSiguiendo(int eventid) throws SQLException, RemoteException {
+          try {
+
+            try (PreparedStatement stmt = db.con.prepareStatement("SELECT userid FROM siguiendo WHERE eventid = ?")) {
+
+                stmt.setInt(1, eventid);
+                ResultSet rs = stmt.executeQuery();
+                ArrayList al = new ArrayList();
+                List<Usuario> aa = new ArrayList<Usuario>();
+                System.out.println("Completo");
+
+                while (rs.next()) {
+                  String name =  rs.getString(1);
+                   al.add(name);
+                }
+                stmt.close();
+                rs.close();
+                for (int i = 0; i < al.size(); i++) {
+                    Usuario us = new Usuario();
+                    us.setUserid((String) al.get(i));
+                    aa.add(us);
                 }
                 return aa;
                 // SerRS result = new SerRS(rs);
