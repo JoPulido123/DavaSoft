@@ -39,8 +39,8 @@ import javax.swing.table.DefaultTableModel;
 public class modelo extends java.rmi.server.UnicastRemoteObject implements proxyInterface {
 
     private final Database db;
-    final String USER_DB = "Pulido";
-    final String PASS_DB = "Universo7788";
+    final String USER_DB = "";
+    final String PASS_DB = "";
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     Date fechaactual = new Date(System.currentTimeMillis());
 
